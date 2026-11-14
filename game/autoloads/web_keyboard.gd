@@ -45,6 +45,13 @@ const JS_SETUP := """
 		return null;
 	}
 
+	var lastHit = 0;
+	['mousedown', 'mouseup', 'click'].forEach(function (name) {
+		window.addEventListener(name, function (e) {
+			if (Date.now() - lastHit < 800) { e.preventDefault(); e.stopImmediatePropagation(); }
+		}, true);
+	});
+
 	canvas.addEventListener('touchend', function (e) {
 		var touch = e.changedTouches[0];
 		var found = touch ? hit(touch) : null;
@@ -52,6 +59,10 @@ const JS_SETUP := """
 			if (kb.active >= 0) { input.blur(); }
 			return;
 		}
+		// The browser follows a touch with fake mouse events, and Godot answers those by
+		// focusing the canvas, which closes the keyboard again. Cancel them.
+		e.preventDefault();
+		lastHit = Date.now();
 		// Must happen here, inside the gesture, or iOS keeps the keyboard closed.
 		input.style.left = found.left + 'px';
 		input.style.top = found.top + 'px';

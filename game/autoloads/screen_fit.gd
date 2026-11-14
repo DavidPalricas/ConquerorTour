@@ -9,6 +9,8 @@ const LANDSCAPE_SIZE := Vector2i(1600, 900)
 const PORTRAIT_SIZE := Vector2i(560, 1000)
 
 var _overlay: CanvasLayer = null
+var _last_size := Vector2i.ZERO
+var _last_scene: Node = null
 
 func _ready() -> void:
 	_overlay = _build_overlay()
@@ -17,6 +19,11 @@ func _ready() -> void:
 	get_tree().node_added.connect(_on_node_added)
 	_apply()
 
+# Browsers on some phones do not report a rotation or a scene change reliably, so check each frame.
+func _process(_delta: float) -> void:
+	if get_window().size != _last_size or get_tree().current_scene != _last_scene:
+		_apply()
+
 func _on_node_added(node: Node) -> void:
 	# A new scene was loaded under the root: refit for it once it is the current scene.
 	if node.get_parent() == get_tree().root and node != self:
@@ -24,6 +31,8 @@ func _on_node_added(node: Node) -> void:
 
 func _apply() -> void:
 	var window: Window = get_window()
+	_last_size = window.size
+	_last_scene = get_tree().current_scene
 	var portrait: bool = window.size.y > window.size.x
 	var scene: Node = get_tree().current_scene
 	var is_match: bool = scene is MatchView
