@@ -69,6 +69,7 @@ layout_mode = 2
 text = "UI_NAME_LABEL"
 
 [node name="NameEdit" type="LineEdit" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 placeholder_text = "UI_NAME_PLACEHOLDER"
 
@@ -91,6 +92,7 @@ layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="CodeEdit" type="LineEdit" parent="Center/Panel/Margin/Box/JoinRow"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "UI_CODE_PLACEHOLDER"

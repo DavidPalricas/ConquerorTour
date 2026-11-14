@@ -57,7 +57,18 @@ func _ready() -> void:
 	status_label.text = Session.close_reason
 	Session.close_reason = ""
 
-	name_edit.grab_focus()
+	name_edit.text_submitted.connect(_on_text_submitted)
+	code_edit.text_submitted.connect(_on_text_submitted)
+
+	# On a touch screen the keyboard only opens from a tap, so focusing here would
+	# leave the field "active" with no keyboard until the player taps it twice.
+	if not DisplayServer.is_touchscreen_available():
+		name_edit.grab_focus()
+
+# Enter / the keyboard's "done" key confirms the field and closes the on-screen keyboard.
+func _on_text_submitted(_text: String) -> void:
+	DisplayServer.virtual_keyboard_hide()
+	get_viewport().gui_release_focus()
 
 func _build_color_row() -> void:
 	for index in KingPalette.COLORS.size():
