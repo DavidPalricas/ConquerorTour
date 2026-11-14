@@ -155,3 +155,4 @@ FMT_MONEY,{amount} ducats,{amount} ducados
 FMT_COMPACT_K,{amount}K,{amount}K
 FMT_THOUSANDS_SEP,",",.
 FMT_DECIMAL_SEP,.,","
+UI_ROTATE,Rotate your phone to play,Roda o telemóvel para jogar

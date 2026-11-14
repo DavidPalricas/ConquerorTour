@@ -20,6 +20,8 @@ config/icon="res://icon.svg"
 EventBus="*res://autoloads/event_bus.gd"
 Settings="*res://autoloads/settings.gd"
 Session="*res://autoloads/session.gd"
+ScreenFit="*res://autoloads/screen_fit.gd"
+WebKeyboard="*res://autoloads/web_keyboard.gd"
 
 [display]
 
@@ -37,6 +39,8 @@ locale/translations=PackedStringArray("res://translations/strings.en_GB.translat
 locale/fallback="en_GB"
 
 [rendering]
+
+environment/defaults/default_clear_color=Color(0.11, 0.08, 0.24, 1)
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
