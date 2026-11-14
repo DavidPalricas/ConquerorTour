@@ -1,0 +1,80 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://engine/match_engine.gd" id="1"]
+[ext_resource type="Resource" path="res://config/game_config.tres" id="2"]
+[ext_resource type="Script" path="res://engine/states/idle_state.gd" id="3"]
+[ext_resource type="Script" path="res://engine/states/roll_state.gd" id="4"]
+[ext_resource type="Script" path="res://engine/states/buy_state.gd" id="5"]
+[ext_resource type="Script" path="res://engine/states/offer_state.gd" id="6"]
+[ext_resource type="Script" path="res://engine/states/offer_response_state.gd" id="7"]
+[ext_resource type="Script" path="res://engine/states/target_state.gd" id="8"]
+[ext_resource type="Script" path="res://engine/states/game_over_state.gd" id="9"]
+[ext_resource type="Script" path="res://patterns/fsm/transition.gd" id="10"]
+
+[node name="MatchEngine" type="Node" node_paths=PackedStringArray("_states", "_transitions")]
+script = ExtResource("1")
+config = ExtResource("2")
+_states = [NodePath("States/Idle"), NodePath("States/Roll"), NodePath("States/Buy"), NodePath("States/Offer"), NodePath("States/OfferResponse"), NodePath("States/Target"), NodePath("States/GameOver")]
+_transitions = [NodePath("Transitions/ToRoll"), NodePath("Transitions/ToBuy"), NodePath("Transitions/ToOffer"), NodePath("Transitions/ToOfferResponse"), NodePath("Transitions/ToTarget"), NodePath("Transitions/ToGameOver")]
+
+[node name="States" type="Node" parent="."]
+
+[node name="Idle" type="Node" parent="States"]
+script = ExtResource("3")
+
+[node name="Roll" type="Node" parent="States"]
+script = ExtResource("4")
+phase = 1
+
+[node name="Buy" type="Node" parent="States"]
+script = ExtResource("5")
+phase = 2
+
+[node name="Offer" type="Node" parent="States"]
+script = ExtResource("6")
+phase = 3
+
+[node name="OfferResponse" type="Node" parent="States"]
+script = ExtResource("7")
+phase = 4
+
+[node name="Target" type="Node" parent="States"]
+script = ExtResource("8")
+phase = 5
+
+[node name="GameOver" type="Node" parent="States"]
+script = ExtResource("9")
+phase = 6
+
+[node name="Transitions" type="Node" parent="."]
+
+[node name="ToRoll" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"roll"
+to = NodePath("../../States/Roll")
+
+[node name="ToBuy" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"buy"
+to = NodePath("../../States/Buy")
+
+[node name="ToOffer" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"offer"
+to = NodePath("../../States/Offer")
+
+[node name="ToOfferResponse" type="Node" parent="Transitions" node_paths=PackedStringArray("from", "to")]
+script = ExtResource("10")
+transition_name = &"offer_response"
+from = NodePath("../../States/Offer")
+to = NodePath("../../States/OfferResponse")
+
+[node name="ToTarget" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"target"
+to = NodePath("../../States/Target")
+
+[node name="ToGameOver" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"game_over"
+to = NodePath("../../States/GameOver")

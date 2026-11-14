@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://players/king.gd" id="1"]
+[ext_resource type="Texture2D" path="res://players/king_body.png" id="2"]
+[ext_resource type="Texture2D" path="res://players/king_clothes.png" id="3"]
+
+[node name="King" type="Node2D" node_paths=PackedStringArray("clothes")]
+scale = Vector2(0.55, 0.55)
+script = ExtResource("1")
+clothes = NodePath("Clothes")
+
+[node name="Body" type="Sprite2D" parent="."]
+texture = ExtResource("2")
+offset = Vector2(0, -30)
+
+[node name="Clothes" type="Sprite2D" parent="."]
+texture = ExtResource("3")
+offset = Vector2(0, -30)

@@ -1,0 +1,132 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://board/board.gd" id="1"]
+[ext_resource type="PackedScene" path="res://board/board_tile.tscn" id="2"]
+
+[node name="Board" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Start" parent="." instance=ExtResource("2")]
+tile_type = 2
+city_name = "TILE_START"
+
+[node name="Lisbon" parent="." instance=ExtResource("2")]
+city_name = "CITY_LISBON"
+
+[node name="Porto" parent="." instance=ExtResource("2")]
+city_name = "CITY_PORTO"
+
+[node name="RouletteSouth" parent="." instance=ExtResource("2")]
+tile_type = 6
+city_name = "TILE_ROULETTE"
+
+[node name="Goa" parent="." instance=ExtResource("2")]
+city_name = "CITY_GOA"
+
+[node name="ChurchSantiago" parent="." instance=ExtResource("2")]
+tile_type = 1
+city_name = "CHURCH_SANTIAGO"
+
+[node name="Seville" parent="." instance=ExtResource("2")]
+city_name = "CITY_SEVILLE"
+empire = 1
+
+[node name="Madrid" parent="." instance=ExtResource("2")]
+city_name = "CITY_MADRID"
+empire = 1
+
+[node name="Hell" parent="." instance=ExtResource("2")]
+tile_type = 3
+city_name = "TILE_HELL"
+
+[node name="Toledo" parent="." instance=ExtResource("2")]
+city_name = "CITY_TOLEDO"
+empire = 1
+
+[node name="Amsterdam" parent="." instance=ExtResource("2")]
+city_name = "CITY_AMSTERDAM"
+empire = 5
+
+[node name="Rotterdam" parent="." instance=ExtResource("2")]
+city_name = "CITY_ROTTERDAM"
+empire = 5
+
+[node name="ChurchHolySepulchre" parent="." instance=ExtResource("2")]
+tile_type = 1
+city_name = "CHURCH_HOLY_SEPULCHRE"
+
+[node name="Constantinople" parent="." instance=ExtResource("2")]
+city_name = "CITY_CONSTANTINOPLE"
+empire = 4
+
+[node name="Cairo" parent="." instance=ExtResource("2")]
+city_name = "CITY_CAIRO"
+empire = 4
+
+[node name="Damascus" parent="." instance=ExtResource("2")]
+city_name = "CITY_DAMASCUS"
+empire = 4
+
+[node name="PopeCall" parent="." instance=ExtResource("2")]
+tile_type = 4
+city_name = "TILE_POPE_CALL"
+
+[node name="Beijing" parent="." instance=ExtResource("2")]
+city_name = "CITY_BEIJING"
+empire = 6
+
+[node name="Nanjing" parent="." instance=ExtResource("2")]
+city_name = "CITY_NANJING"
+empire = 6
+
+[node name="ChurchStPeter" parent="." instance=ExtResource("2")]
+tile_type = 1
+city_name = "CHURCH_ST_PETER"
+
+[node name="Guangzhou" parent="." instance=ExtResource("2")]
+city_name = "CITY_GUANGZHOU"
+empire = 6
+
+[node name="RouletteNorth" parent="." instance=ExtResource("2")]
+tile_type = 6
+city_name = "TILE_ROULETTE"
+
+[node name="Kyoto" parent="." instance=ExtResource("2")]
+city_name = "CITY_KYOTO"
+empire = 7
+
+[node name="Edo" parent="." instance=ExtResource("2")]
+city_name = "CITY_EDO"
+empire = 7
+
+[node name="Tax" parent="." instance=ExtResource("2")]
+tile_type = 5
+city_name = "TILE_TAX"
+
+[node name="Paris" parent="." instance=ExtResource("2")]
+city_name = "CITY_PARIS"
+empire = 3
+
+[node name="Lyon" parent="." instance=ExtResource("2")]
+city_name = "CITY_LYON"
+empire = 3
+
+[node name="Marseille" parent="." instance=ExtResource("2")]
+city_name = "CITY_MARSEILLE"
+empire = 3
+
+[node name="ChurchCanterbury" parent="." instance=ExtResource("2")]
+tile_type = 1
+city_name = "CHURCH_CANTERBURY"
+
+[node name="London" parent="." instance=ExtResource("2")]
+city_name = "CITY_LONDON"
+empire = 2
+
+[node name="Bristol" parent="." instance=ExtResource("2")]
+city_name = "CITY_BRISTOL"
+empire = 2
+
+[node name="York" parent="." instance=ExtResource("2")]
+city_name = "CITY_YORK"
+empire = 2

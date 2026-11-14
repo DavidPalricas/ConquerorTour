@@ -1,0 +1,59 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://board/board_tile.gd" id="1"]
+[ext_resource type="Texture2D" path="res://board/flags/portugal.png" id="2"]
+[ext_resource type="Texture2D" path="res://board/icons/church.png" id="3"]
+[ext_resource type="Texture2D" path="res://board/buildings/land.png" id="4"]
+[ext_resource type="Texture2D" path="res://board/buildings/shield.png" id="5"]
+
+[node name="BoardTile" type="Node2D" node_paths=PackedStringArray("flag", "icon", "name_label", "info_label", "building", "shield_icon")]
+script = ExtResource("1")
+flag = NodePath("Flag")
+icon = NodePath("Icon")
+name_label = NodePath("NameLabel")
+info_label = NodePath("InfoLabel")
+building = NodePath("Building")
+shield_icon = NodePath("Shield")
+
+[node name="Flag" type="Sprite2D" parent="."]
+position = Vector2(8, -29)
+scale = Vector2(0.7, 0.7)
+texture = ExtResource("2")
+
+[node name="NameLabel" type="Label" parent="."]
+offset_left = -44.0
+offset_top = -16.0
+offset_right = 44.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.15, 0.1, 0.18, 1)
+theme_override_constants/line_spacing = -3
+theme_override_font_sizes/font_size = 11
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="InfoLabel" type="Label" parent="."]
+auto_translate_mode = 2
+offset_left = -44.0
+offset_top = 15.0
+offset_right = 44.0
+offset_bottom = 34.0
+theme_override_colors/font_color = Color(0.35, 0.12, 0.1, 1)
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Icon" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("3")
+offset = Vector2(0, -24)
+
+[node name="Building" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("4")
+offset = Vector2(0, -16)
+
+[node name="Shield" type="Sprite2D" parent="."]
+visible = false
+texture = ExtResource("5")
+offset = Vector2(0, -8)

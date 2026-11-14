@@ -1,0 +1,122 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/main_menu/main_menu.gd" id="1"]
+
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("name_edit", "color_row", "create_button", "code_edit", "join_button", "language_option", "status_label")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+lobby_scene_path = "res://ui/lobby/lobby.tscn"
+match_scene_path = "res://ui/match/match.tscn"
+name_edit = NodePath("Center/Panel/Margin/Box/NameEdit")
+color_row = NodePath("Center/Panel/Margin/Box/Colors")
+create_button = NodePath("Center/Panel/Margin/Box/CreateButton")
+code_edit = NodePath("Center/Panel/Margin/Box/JoinRow/CodeEdit")
+join_button = NodePath("Center/Panel/Margin/Box/JoinRow/JoinButton")
+language_option = NodePath("Center/Panel/Margin/Box/LanguageRow/LanguageOption")
+status_label = NodePath("Center/Panel/Margin/Box/StatusLabel")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.08, 0.24, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Box" type="VBoxContainer" parent="Center/Panel/Margin"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 46
+text = "UI_TITLE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+text = "UI_SUBTITLE"
+horizontal_alignment = 1
+
+[node name="NameLabel" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+text = "UI_NAME_LABEL"
+
+[node name="NameEdit" type="LineEdit" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+placeholder_text = "UI_NAME_PLACEHOLDER"
+
+[node name="ColorLabel" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+text = "UI_COLOR_LABEL"
+
+[node name="Colors" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "UI_CREATE_ROOM"
+
+[node name="JoinRow" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="CodeEdit" type="LineEdit" parent="Center/Panel/Margin/Box/JoinRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "UI_CODE_PLACEHOLDER"
+max_length = 12
+
+[node name="JoinButton" type="Button" parent="Center/Panel/Margin/Box/JoinRow"]
+custom_minimum_size = Vector2(180, 48)
+layout_mode = 2
+text = "UI_JOIN_ROOM"
+
+[node name="LanguageRow" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LanguageLabel" type="Label" parent="Center/Panel/Margin/Box/LanguageRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "UI_LANGUAGE_LABEL"
+
+[node name="LanguageOption" type="OptionButton" parent="Center/Panel/Margin/Box/LanguageRow"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.5, 1)
+horizontal_alignment = 1
+autowrap_mode = 3

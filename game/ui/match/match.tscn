@@ -1,0 +1,275 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Script" path="res://ui/match/match_view.gd" id="1"]
+[ext_resource type="PackedScene" path="res://board/board.tscn" id="2"]
+[ext_resource type="Script" path="res://ui/match/players_hud.gd" id="3"]
+[ext_resource type="Script" path="res://ui/match/action_panel.gd" id="4"]
+[ext_resource type="Script" path="res://ui/match/event_log.gd" id="5"]
+[ext_resource type="Script" path="res://ui/match/buy_popup.gd" id="6"]
+[ext_resource type="Script" path="res://ui/match/dice_view.gd" id="7"]
+
+[sub_resource type="StyleBoxFlat" id="popup_box"]
+bg_color = Color(0.13, 0.1, 0.26, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.84, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="card_box"]
+content_margin_left = 14.0
+content_margin_top = 6.0
+content_margin_right = 14.0
+content_margin_bottom = 6.0
+bg_color = Color(0.2, 0.06, 0.1, 0.96)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.4, 0.3, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Match" type="Node2D" node_paths=PackedStringArray("board", "kings_root", "players_hud", "action_panel", "buy_popup", "event_log", "card_panel", "card_title", "card_text", "leave_button")]
+script = ExtResource("1")
+main_menu_path = "res://ui/main_menu/main_menu.tscn"
+board = NodePath("Board")
+kings_root = NodePath("Kings")
+players_hud = NodePath("HUD/PlayersHud")
+action_panel = NodePath("HUD/ActionPanel")
+buy_popup = NodePath("HUD/BuyPopup")
+event_log = NodePath("HUD/ActionPanel/EventLog")
+card_panel = NodePath("HUD/CardPanel")
+card_title = NodePath("HUD/CardPanel/Box/CardTitle")
+card_text = NodePath("HUD/CardPanel/Box/CardText")
+leave_button = NodePath("HUD/LeaveButton")
+
+[node name="BackgroundLayer" type="CanvasLayer" parent="."]
+layer = -1
+
+[node name="Background" type="ColorRect" parent="BackgroundLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.11, 0.08, 0.24, 1)
+
+[node name="Board" parent="." instance=ExtResource("2")]
+transform = Transform2D(0.85, 0.425, -0.85, 0.425, 800, 96)
+
+[node name="Kings" type="Node2D" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="PlayersHud" type="Control" parent="HUD"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3")
+
+[node name="LeaveButton" type="Button" parent="HUD"]
+offset_left = 720.0
+offset_top = 6.0
+offset_right = 880.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 13
+text = "UI_LEAVE"
+
+[node name="CardPanel" type="PanelContainer" parent="HUD"]
+offset_left = 500.0
+offset_top = 826.0
+offset_right = 1100.0
+offset_bottom = 894.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("card_box")
+
+[node name="Box" type="VBoxContainer" parent="HUD/CardPanel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="CardTitle" type="Label" parent="HUD/CardPanel/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="CardText" type="Label" parent="HUD/CardPanel/Box"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ActionPanel" type="VBoxContainer" parent="HUD" node_paths=PackedStringArray("turn_label", "total_label", "dice_view", "prompt_label", "roll_button", "offer_box", "offer_value_label", "offer_slider", "offer_button", "response_box", "accept_button", "refuse_button", "skip_button", "timer_label")]
+offset_left = 570.0
+offset_top = 306.0
+offset_right = 1030.0
+offset_bottom = 594.0
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+script = ExtResource("4")
+turn_label = NodePath("TurnLabel")
+total_label = NodePath("TotalLabel")
+dice_view = NodePath("DiceView")
+prompt_label = NodePath("PromptLabel")
+roll_button = NodePath("RollButton")
+offer_box = NodePath("OfferBox")
+offer_value_label = NodePath("OfferBox/OfferValueLabel")
+offer_slider = NodePath("OfferBox/OfferSlider")
+offer_button = NodePath("OfferBox/OfferButton")
+response_box = NodePath("ResponseBox")
+accept_button = NodePath("ResponseBox/AcceptButton")
+refuse_button = NodePath("ResponseBox/RefuseButton")
+skip_button = NodePath("SkipButton")
+timer_label = NodePath("TimerLabel")
+
+[node name="TurnLabel" type="Label" parent="HUD/ActionPanel"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 20
+horizontal_alignment = 1
+
+[node name="TotalLabel" type="Label" parent="HUD/ActionPanel"]
+auto_translate_mode = 2
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.2, 1)
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 38
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DiceView" type="Control" parent="HUD/ActionPanel"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("7")
+
+[node name="PromptLabel" type="Label" parent="HUD/ActionPanel"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="RollButton" type="Button" parent="HUD/ActionPanel"]
+custom_minimum_size = Vector2(260, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
+text = "UI_ROLL"
+
+[node name="OfferBox" type="VBoxContainer" parent="HUD/ActionPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="OfferValueLabel" type="Label" parent="HUD/ActionPanel/OfferBox"]
+auto_translate_mode = 2
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="OfferSlider" type="HSlider" parent="HUD/ActionPanel/OfferBox"]
+layout_mode = 2
+
+[node name="OfferButton" type="Button" parent="HUD/ActionPanel/OfferBox"]
+custom_minimum_size = Vector2(260, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "UI_OFFER_SEND"
+
+[node name="ResponseBox" type="HBoxContainer" parent="HUD/ActionPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="AcceptButton" type="Button" parent="HUD/ActionPanel/ResponseBox"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+text = "UI_ACCEPT"
+
+[node name="RefuseButton" type="Button" parent="HUD/ActionPanel/ResponseBox"]
+custom_minimum_size = Vector2(160, 42)
+layout_mode = 2
+text = "UI_REFUSE"
+
+[node name="SkipButton" type="Button" parent="HUD/ActionPanel"]
+custom_minimum_size = Vector2(200, 36)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "UI_SKIP"
+
+[node name="TimerLabel" type="Label" parent="HUD/ActionPanel"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+horizontal_alignment = 1
+
+[node name="EventLog" type="RichTextLabel" parent="HUD/ActionPanel"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 12
+bbcode_enabled = true
+scroll_following = true
+script = ExtResource("5")
+
+[node name="BuyPopup" type="PanelContainer" parent="HUD" node_paths=PackedStringArray("title_label", "options_box", "skip_button")]
+offset_left = 600.0
+offset_top = 360.0
+offset_right = 1000.0
+offset_bottom = 420.0
+theme_override_styles/panel = SubResource("popup_box")
+script = ExtResource("6")
+title_label = NodePath("Margin/Box/TitleLabel")
+options_box = NodePath("Margin/Box/Options")
+skip_button = NodePath("Margin/Box/SkipButton")
+
+[node name="Margin" type="MarginContainer" parent="HUD/BuyPopup"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
+
+[node name="Box" type="VBoxContainer" parent="HUD/BuyPopup/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="HUD/BuyPopup/Margin/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 26
+horizontal_alignment = 1
+
+[node name="Caption" type="Label" parent="HUD/BuyPopup/Margin/Box"]
+layout_mode = 2
+text = "UI_BUY_CAPTION"
+horizontal_alignment = 1
+
+[node name="Options" type="HBoxContainer" parent="HUD/BuyPopup/Margin/Box"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SkipButton" type="Button" parent="HUD/BuyPopup/Margin/Box"]
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "UI_SKIP"

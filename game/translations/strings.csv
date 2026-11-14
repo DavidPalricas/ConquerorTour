@@ -1,0 +1,157 @@
+keys,en_GB,pt_PT
+UI_TITLE,Conqueror Tour,Conqueror Tour
+UI_SUBTITLE,Kings of the Age of Discovery,Reis da Época dos Descobrimentos
+UI_NAME_LABEL,Your name,O teu nome
+UI_NAME_PLACEHOLDER,King's name,Nome do rei
+UI_COLOR_LABEL,Colour of your king,Cor do teu rei
+UI_CREATE_ROOM,Create room,Criar sala
+UI_JOIN_ROOM,Join room,Juntar a sala
+UI_CODE_PLACEHOLDER,Room code,Código da sala
+UI_LANGUAGE_LABEL,Language,Idioma
+UI_CONNECTING,Connecting…,A ligar…
+UI_LOBBY_TITLE,Lobby,Lobby
+UI_ROOM_CODE_LABEL,Room code,Código da sala
+UI_COPY_LINK,Copy invitation,Copiar convite
+UI_COPIED,Copied!,Copiado!
+UI_READY,Ready,Pronto
+UI_NOT_READY,Not ready,Não está pronto
+UI_SET_READY,I am ready,Estou pronto
+UI_START_MATCH,Start match,Iniciar partida
+UI_LEAVE,Leave,Sair
+UI_ADD_LOCAL_PLAYER,Add local player,Adicionar jogador local
+UI_LOCAL_PLAYER_NAME,King {number},Rei {number}
+UI_LOBBY_HINT_HOST,Share the code with your friends. The match starts when everyone is ready (2 to 8 players).,Partilha o código com os teus amigos. A partida começa quando todos estiverem prontos (2 a 8 jogadores).
+UI_LOBBY_HINT_CLIENT,Waiting for the host to start the match.,À espera que o anfitrião inicie a partida.
+UI_LOBBY_HINT_LOCAL,Local game: all the players share this screen.,Jogo local: todos os jogadores partilham este ecrã.
+UI_HOST_TAG,(host),(anfitrião)
+UI_YOU_TAG,(you),(tu)
+UI_BOT_TAG,(bot),(bot)
+UI_TURN_OF,Turn of {player},Vez de {player}
+UI_ROLL,Roll the dice,Lançar os dados
+UI_BUY_CAPTION,Choose how far you build. The price is the total up to that level.,Escolhe até onde constróis. O preço é o total até esse nível.
+UI_SKIP,Skip,Passar
+UI_OFFER_VALUE,Offer: {amount},Proposta: {amount}
+UI_OFFER_SEND,Propose purchase,Propor compra
+UI_OFFER_FORCE,Force purchase,Forçar compra
+UI_ACCEPT,Accept,Aceitar
+UI_REFUSE,Refuse,Recusar
+UI_TIME_LEFT,{seconds} s left to answer,Faltam {seconds} s para responder
+UI_DEBT,Still owes {amount},Faltam pagar {amount}
+UI_STATUS_HELL,In Hell: {count} turns left,No Inferno: faltam {count} turnos
+UI_STATUS_BANKRUPT,Bankrupt,Falido
+UI_WINNER,{player} wins!,{player} venceu!
+UI_BACK_TO_MENU,Back to menu,Voltar ao menu
+PROMPT_ROLL,It is your turn. Roll the dice.,É a tua vez. Lança os dados.
+PROMPT_WAITING,Waiting for {player}…,À espera de {player}…
+PROMPT_BUY,Choose what to buy in the pop-up.,Escolhe o que comprar no pop-up.
+PROMPT_OFFER,You may make one purchase offer for {tile}. At the top price the purchase is forced.,Podes fazer uma proposta de compra por {tile}. No preço máximo a compra é forçada.
+PROMPT_OFFER_RESPONSE,{player} offers you {amount} for {tile}.,{player} oferece-te {amount} por {tile}.
+PROMPT_OFFER_PENDING,{player} offered {other} {amount} for {tile}.,{player} ofereceu {amount} a {other} por {tile}.
+PROMPT_TARGET_POPE,The Pope calls you: click one of your properties or a free one.,O Papa chama-te: clica numa das tuas propriedades ou numa livre.
+PROMPT_TARGET_INVASION,King's Invasion: click the property you want to destroy.,King's Invasion: clica na propriedade que queres destruir.
+PROMPT_TARGET_SHIELD,Shield: click the property you want to protect.,Shield: clica na propriedade que queres proteger.
+TILE_START,Start,Partida
+TILE_HELL,Hell,Inferno
+TILE_POPE_CALL,Pope's Call,Chamada do Papa
+TILE_TAX,Tax,Imposto
+TILE_ROULETTE,Lucifer Roulette,Lucifer Roulette
+CHURCH_ST_PETER,St Peter's Basilica,Basílica de São Pedro
+CHURCH_SANTIAGO,Santiago de Compostela,Santiago de Compostela
+CHURCH_CANTERBURY,Canterbury Cathedral,Catedral de Cantuária
+CHURCH_HOLY_SEPULCHRE,Holy Sepulchre,Santo Sepulcro
+CITY_LISBON,Lisbon,Lisboa
+CITY_PORTO,Porto,Porto
+CITY_GOA,Goa,Goa
+CITY_SEVILLE,Seville,Sevilha
+CITY_MADRID,Madrid,Madrid
+CITY_TOLEDO,Toledo,Toledo
+CITY_AMSTERDAM,Amsterdam,Amesterdão
+CITY_ROTTERDAM,Rotterdam,Roterdão
+CITY_CONSTANTINOPLE,Constantinople,Constantinopla
+CITY_CAIRO,Cairo,Cairo
+CITY_DAMASCUS,Damascus,Damasco
+CITY_BEIJING,Beijing,Pequim
+CITY_NANJING,Nanjing,Nanquim
+CITY_GUANGZHOU,Guangzhou,Cantão
+CITY_KYOTO,Kyoto,Quioto
+CITY_EDO,Edo,Edo
+CITY_PARIS,Paris,Paris
+CITY_LYON,Lyon,Lyon
+CITY_MARSEILLE,Marseille,Marselha
+CITY_LONDON,London,Londres
+CITY_BRISTOL,Bristol,Bristol
+CITY_YORK,York,York
+EMPIRE_PORTUGAL,Portuguese Empire,Império Português
+EMPIRE_SPAIN,Spanish Empire,Império Espanhol
+EMPIRE_BRITAIN,British Empire,Império Britânico
+EMPIRE_FRANCE,French Empire,Império Francês
+EMPIRE_OTTOMAN,Ottoman Empire,Império Otomano
+EMPIRE_NETHERLANDS,Dutch Empire,Império Holandês
+EMPIRE_CHINA,Chinese Empire,Império Chinês
+EMPIRE_JAPAN,Japanese Empire,Império Japonês
+LEVEL_LAND,Land,Terreno
+LEVEL_SHACK,Shack,Barraca
+LEVEL_HOUSE,House,Casa
+LEVEL_CASTLE,Castle,Castelo
+CARD_LUCIFER_DEBT_TITLE,Lucifer Debt,Lucifer Debt
+CARD_LUCIFER_DEBT_TEXT,"The next time you land on one of your properties, you pay its rent once. The money goes to nobody.","Da próxima vez que caíres numa propriedade tua, pagas a renda dela uma vez. O dinheiro não vai para ninguém."
+CARD_LUCIFER_GIFT_TITLE,Lucifer Gift,Lucifer Gift
+CARD_LUCIFER_GIFT_TEXT,Every other player gives you money.,Cada um dos outros jogadores dá-te dinheiro.
+CARD_KINGS_INVASION_TITLE,King's Invasion,King's Invasion
+CARD_KINGS_INVASION_TEXT,"Choose a property of another player and destroy it entirely. Castles cannot be chosen, churches can.","Escolhe uma propriedade de outro jogador e destrói-a por inteiro. Os castelos não podem ser escolhidos, as igrejas podem."
+CARD_SHIELD_TITLE,Shield,Shield
+CARD_SHIELD_TEXT,Protect one of your properties: nobody can make an offer for it and it survives one invasion.,Protege uma das tuas propriedades: ninguém pode fazer proposta por ela e resiste a uma invasão.
+CARD_PAY_DOUBLE_TITLE,Double Toll,Portagem a Dobrar
+CARD_PAY_DOUBLE_TEXT,The next rent you pay is doubled.,A próxima renda que pagares é a dobrar.
+CARD_PAY_HALF_TITLE,Half Toll,Meia Portagem
+CARD_PAY_HALF_TEXT,The next rent you pay is halved.,A próxima renda que pagares é metade.
+EV_ROLLED,{player} rolled {dice}.,{player} lançou {dice}.
+EV_PASSED_START,{player} passed the Start and received {amount}.,{player} passou pela Partida e recebeu {amount}.
+EV_BOUGHT,{player} bought {tile} ({level}) for {amount}.,{player} comprou {tile} ({level}) por {amount}.
+EV_UPGRADED,{player} upgraded {tile} to {level} for {amount}.,{player} melhorou {tile} para {level} por {amount}.
+EV_RENT_PAID,{player} paid {amount} in rent to {other} for {tile}.,{player} pagou {amount} de renda a {other} por {tile}.
+EV_TAX_PAID,{player} paid {amount} in tax to Lucifer.,{player} pagou {amount} de imposto ao Lucifer.
+EV_DEBT_CARD_PAID,{player} settled the Lucifer Debt: {amount} for {tile}.,{player} saldou a Lucifer Debt: {amount} por {tile}.
+EV_SENT_TO_HELL,{player} was sent to Hell.,{player} foi para o Inferno.
+EV_HELL_WAIT,{player} is stuck in Hell (turns left: {count}).,{player} está preso no Inferno (turnos em falta: {count}).
+EV_POPE_TRAVEL,The Pope called {player} to {tile}.,O Papa chamou {player} a {tile}.
+EV_CARD_DRAWN,{player} drew the card {card}.,{player} tirou a carta {card}.
+EV_GIFT_PAID,{player} gave {amount} to {other}.,{player} deu {amount} a {other}.
+EV_INVASION,{player} invaded {tile} and destroyed the property of {other}.,{player} invadiu {tile} e destruiu a propriedade de {other}.
+EV_SHIELD_PLACED,{player} shielded {tile}.,{player} protegeu {tile}.
+EV_SHIELD_BROKEN,The shield on {tile} stopped {player} and broke.,O escudo de {tile} travou {player} e quebrou-se.
+EV_OFFER_MADE,{player} offered {other} {amount} for {tile}.,{player} ofereceu {amount} a {other} por {tile}.
+EV_OFFER_ACCEPTED,{player} sold {tile} to {other} for {amount}.,{player} vendeu {tile} a {other} por {amount}.
+EV_OFFER_REFUSED,{player} refused the offer of {other} for {tile}.,{player} recusou a proposta de {other} por {tile}.
+EV_OFFER_FORCED,{player} forced the purchase of {tile} from {other} for {amount}.,{player} forçou a compra de {tile} a {other} por {amount}.
+EV_OFFER_TIMEOUT,{player} did not answer: the offer for {tile} counts as refused.,{player} não respondeu: a proposta por {tile} conta como recusada.
+EV_LOAN_TAKEN,{player} borrowed {amount} from Lucifer.,{player} pediu {amount} emprestados ao Lucifer.
+EV_DEBT_GARNISHED,Lucifer seized {amount} from {player}.,O Lucifer penhorou {amount} a {player}.
+EV_DEBT_CLEARED,{player} paid off the debt to Lucifer.,{player} saldou a dívida ao Lucifer.
+EV_BANKRUPT,{player} went bankrupt.,{player} foi à falência.
+EV_PLAYER_LEFT,{player} dropped out. A bot plays in the meantime.,{player} caiu. Um bot joga entretanto.
+EV_PLAYER_RETURNED,{player} is back.,{player} voltou.
+EV_EXTRA_TURN,{player} rolled a double and plays again.,{player} tirou dobles e joga outra vez.
+EV_WON,{player} won the match. {reason},{player} venceu a partida. {reason}
+WIN_NONE,,
+WIN_LINE,A whole line of the board.,Uma linha inteira do tabuleiro.
+WIN_MONOPOLIES,Three complete empires.,Três impérios completos.
+WIN_CHURCHES,The four great churches.,As quatro grandes igrejas.
+WIN_LAST_STANDING,Every rival went bankrupt.,Todos os rivais foram à falência.
+ERR_NAME_REQUIRED,Write your name first.,Escreve primeiro o teu nome.
+ERR_CODE_REQUIRED,Write the room code first.,Escreve primeiro o código da sala.
+ERR_ROOM_NOT_FOUND,Room not found. Check the code.,Sala não encontrada. Confirma o código.
+ERR_ROOM_FULL,The room is full.,A sala está cheia.
+ERR_CODE_TAKEN,That room code is in use. Try again.,Esse código de sala está em uso. Tenta outra vez.
+ERR_MATCH_IN_PROGRESS,The match has already started.,A partida já começou.
+ERR_HOST_LEFT,The host left. The match is over.,O anfitrião saiu. A partida terminou.
+ERR_NETWORK,Network error. Try again.,Erro de rede. Tenta outra vez.
+ERR_NO_PEERJS,The network library could not be loaded.,Não foi possível carregar a biblioteca de rede.
+ERR_BROWSER,This browser does not support the connection the game needs.,Este browser não suporta a ligação de que o jogo precisa.
+ERR_ONLINE_WEB_ONLY,Joining a room only works in the browser version.,Juntar a uma sala só funciona na versão para browser.
+LANG_EN_GB,English (UK),English (UK)
+LANG_PT_PT,Português (Portugal),Português (Portugal)
+FMT_MONEY,{amount} ducats,{amount} ducados
+FMT_COMPACT_K,{amount}K,{amount}K
+FMT_THOUSANDS_SEP,",",.
+FMT_DECIMAL_SEP,.,","

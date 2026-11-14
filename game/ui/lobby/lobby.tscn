@@ -1,0 +1,109 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://ui/lobby/lobby.gd" id="1"]
+
+[node name="Lobby" type="Control" node_paths=PackedStringArray("code_label", "copy_button", "player_list", "hint_label", "ready_button", "start_button", "add_local_button", "leave_button")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+main_menu_path = "res://ui/main_menu/main_menu.tscn"
+match_scene_path = "res://ui/match/match.tscn"
+code_label = NodePath("Center/Panel/Margin/Box/CodeRow/CodeLabel")
+copy_button = NodePath("Center/Panel/Margin/Box/CodeRow/CopyButton")
+player_list = NodePath("Center/Panel/Margin/Box/PlayerList")
+hint_label = NodePath("Center/Panel/Margin/Box/HintLabel")
+ready_button = NodePath("Center/Panel/Margin/Box/ReadyButton")
+start_button = NodePath("Center/Panel/Margin/Box/StartButton")
+add_local_button = NodePath("Center/Panel/Margin/Box/AddLocalButton")
+leave_button = NodePath("Center/Panel/Margin/Box/LeaveButton")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.11, 0.08, 0.24, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="Center"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 28
+
+[node name="Box" type="VBoxContainer" parent="Center/Panel/Margin"]
+custom_minimum_size = Vector2(520, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Title" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 34
+text = "UI_LOBBY_TITLE"
+horizontal_alignment = 1
+
+[node name="CodeRow" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="CodeCaption" type="Label" parent="Center/Panel/Margin/Box/CodeRow"]
+layout_mode = 2
+text = "UI_ROOM_CODE_LABEL"
+
+[node name="CodeLabel" type="Label" parent="Center/Panel/Margin/Box/CodeRow"]
+auto_translate_mode = 2
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+horizontal_alignment = 1
+
+[node name="CopyButton" type="Button" parent="Center/Panel/Margin/Box/CodeRow"]
+layout_mode = 2
+text = "UI_COPY_LINK"
+
+[node name="HintLabel" type="Label" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="PlayerList" type="VBoxContainer" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ReadyButton" type="Button" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+toggle_mode = true
+text = "UI_SET_READY"
+
+[node name="AddLocalButton" type="Button" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+text = "UI_ADD_LOCAL_PLAYER"
+
+[node name="StartButton" type="Button" parent="Center/Panel/Margin/Box"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+text = "UI_START_MATCH"
+
+[node name="LeaveButton" type="Button" parent="Center/Panel/Margin/Box"]
+layout_mode = 2
+text = "UI_LEAVE"

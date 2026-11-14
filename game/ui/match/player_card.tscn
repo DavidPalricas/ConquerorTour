@@ -1,0 +1,100 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://ui/match/player_card.gd" id="1"]
+[ext_resource type="Texture2D" path="res://players/king_body.png" id="2"]
+[ext_resource type="Texture2D" path="res://players/king_clothes.png" id="3"]
+
+[node name="PlayerCard" type="Control" node_paths=PackedStringArray("hell_label", "panel", "clothes", "money_label", "name_label", "debt_label")]
+custom_minimum_size = Vector2(270, 112)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 270.0
+offset_bottom = 112.0
+mouse_filter = 2
+script = ExtResource("1")
+hell_label = NodePath("HellLabel")
+panel = NodePath("Panel")
+clothes = NodePath("Panel/Row/Portrait/Clothes")
+money_label = NodePath("Panel/Row/Texts/MoneyLabel")
+name_label = NodePath("Panel/Row/Texts/NameLabel")
+debt_label = NodePath("Panel/Row/Texts/DebtLabel")
+
+[node name="HellLabel" type="Label" parent="."]
+auto_translate_mode = 2
+layout_mode = 0
+offset_right = 270.0
+offset_bottom = 22.0
+theme_override_colors/font_color = Color(1, 0.3, 0.25, 1)
+theme_override_colors/font_outline_color = Color(0.1, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_top = 24.0
+offset_right = 270.0
+offset_bottom = 112.0
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="Panel"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Portrait" type="Control" parent="Panel/Row"]
+custom_minimum_size = Vector2(52, 68)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Body" type="TextureRect" parent="Panel/Row/Portrait"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Clothes" type="TextureRect" parent="Panel/Row/Portrait"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Texts" type="VBoxContainer" parent="Panel/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="MoneyLabel" type="Label" parent="Panel/Row/Texts"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 19
+text_overrun_behavior = 3
+
+[node name="NameLabel" type="Label" parent="Panel/Row/Texts"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text_overrun_behavior = 3
+
+[node name="DebtLabel" type="Label" parent="Panel/Row/Texts"]
+auto_translate_mode = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.35, 1)
+theme_override_font_sizes/font_size = 12
+text_overrun_behavior = 3
