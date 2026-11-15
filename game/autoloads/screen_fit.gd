@@ -6,6 +6,9 @@
 extends Node
 
 const LANDSCAPE_SIZE := Vector2i(1600, 900)
+
+## The menus use a smaller canvas than the match, so their lettering is bigger on a phone.
+const MENU_LANDSCAPE_SIZE := Vector2i(1200, 675)
 const PORTRAIT_SIZE := Vector2i(560, 1000)
 
 var _overlay: CanvasLayer = null
@@ -41,7 +44,7 @@ func _apply() -> void:
 		window.content_scale_size = PORTRAIT_SIZE
 		window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	else:
-		window.content_scale_size = LANDSCAPE_SIZE
+		window.content_scale_size = LANDSCAPE_SIZE if is_match else MENU_LANDSCAPE_SIZE
 		window.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
 
 	_overlay.visible = portrait and is_match

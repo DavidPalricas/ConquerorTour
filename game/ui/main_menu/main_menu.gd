@@ -3,7 +3,7 @@
 ## Layout and styling live in the scene; this script only answers the controls.
 class_name MainMenu extends Control
 
-const SWATCH_SIZE := Vector2(44, 44)
+const SHIELD_SIZE := Vector2(44, 52)
 
 ## Screen shown once inside a room.
 @export_file("*.tscn") var lobby_scene_path: String = ""
@@ -15,6 +15,9 @@ const SWATCH_SIZE := Vector2(44, 44)
 
 ## Row filled with one button per king colour.
 @export var color_row: HBoxContainer = null
+
+## Frame around the king's portrait. Its panel style is a StyleBoxFlat made in the scene.
+@export var portrait_frame: PanelContainer = null
 
 @export var create_button: Button = null
 @export var code_edit: LineEdit = null
@@ -32,6 +35,7 @@ func _ready() -> void:
 	Require.that(match_scene_path != "", "MainMenu.match_scene_path must be assigned in the editor.")
 	Require.not_null(name_edit, "MainMenu.name_edit must be assigned in the editor.")
 	Require.not_null(color_row, "MainMenu.color_row must be assigned in the editor.")
+	Require.not_null(portrait_frame, "MainMenu.portrait_frame must be assigned in the editor.")
 	Require.not_null(create_button, "MainMenu.create_button must be assigned in the editor.")
 	Require.not_null(code_edit, "MainMenu.code_edit must be assigned in the editor.")
 	Require.not_null(join_button, "MainMenu.join_button must be assigned in the editor.")
@@ -43,6 +47,7 @@ func _ready() -> void:
 	code_edit.text = _room_from_link()
 	_color = Settings.color
 	_build_color_row()
+	_show_color()
 	_build_language_option()
 
 	create_button.pressed.connect(_on_create_pressed)
@@ -72,24 +77,18 @@ func _on_text_submitted(_text: String) -> void:
 
 func _build_color_row() -> void:
 	for index in KingPalette.COLORS.size():
-		var button := Button.new()
-		button.custom_minimum_size = SWATCH_SIZE
-		button.toggle_mode = true
+		var button := ShieldButton.new()
+		button.custom_minimum_size = SHIELD_SIZE
+		button.color = KingPalette.COLORS[index]
 		button.button_group = _color_group
 		button.button_pressed = index == _color
-		button.add_theme_stylebox_override("normal", _swatch(KingPalette.COLORS[index], false))
-		button.add_theme_stylebox_override("hover", _swatch(KingPalette.COLORS[index], false))
-		button.add_theme_stylebox_override("pressed", _swatch(KingPalette.COLORS[index], true))
 		button.pressed.connect(_on_color_pressed.bind(index))
 		color_row.add_child(button)
 
-func _swatch(color: Color, selected: bool) -> StyleBoxFlat:
-	var box := StyleBoxFlat.new()
-	box.bg_color = color
-	box.set_corner_radius_all(6)
-	box.set_border_width_all(4 if selected else 0)
-	box.border_color = Color.WHITE
-	return box
+# The frame of the portrait wears the king's colour.
+func _show_color() -> void:
+	var frame: StyleBoxFlat = portrait_frame.get_theme_stylebox("panel")
+	frame.bg_color = KingPalette.color_of(_color)
 
 func _build_language_option() -> void:
 	for index in Settings.LOCALES.size():
@@ -126,6 +125,7 @@ func _set_busy(busy: bool) -> void:
 # Connected in _build_color_row() to each colour button.
 func _on_color_pressed(index: int) -> void:
 	_color = index
+	_show_color()
 
 # Connected in _ready() to create_button.pressed.
 func _on_create_pressed() -> void:

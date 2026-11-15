@@ -119,8 +119,11 @@ func _on_node_added(node: Node) -> void:
 	if not node is LineEdit or _edits.has(node):
 		return
 	var edit: LineEdit = node
-	# The <input> above does the typing, so Godot must not open a second keyboard.
+	# The <input> above does the typing, so Godot must not open a second keyboard. Nor may the
+	# LineEdit take focus: a focused LineEdit turns on Godot's web IME, which pulls the page
+	# focus to its own hidden element every 100 ms and so closes the keyboard on iOS.
 	edit.virtual_keyboard_enabled = false
+	edit.focus_mode = Control.FOCUS_NONE
 	_edits.append(edit)
 	edit.tree_exited.connect(_edits.erase.bind(edit))
 
@@ -156,7 +159,13 @@ func _on_js_event(args: Array) -> void:
 
 	match event.get("kind", ""):
 		"focus":
-			edit.grab_focus()
+			# Looks focused without taking Godot's focus (see _on_node_added).
+			var normal: StyleBox = edit.get_theme_stylebox("normal")
+			if normal is StyleBoxFlat:
+				var active: StyleBoxFlat = normal.duplicate()
+				active.set_border_width_all(2)
+				active.border_color = Color(1, 0.84, 0.3)
+				edit.add_theme_stylebox_override("normal", active)
 		"text":
 			edit.text = str(event.get("text", ""))
 			edit.caret_column = edit.text.length()
@@ -164,4 +173,4 @@ func _on_js_event(args: Array) -> void:
 		"submit":
 			edit.text_submitted.emit(edit.text)
 		"blur":
-			edit.release_focus()
+			edit.remove_theme_stylebox_override("normal")

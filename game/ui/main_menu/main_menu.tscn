@@ -1,33 +1,59 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://ui/main_menu/main_menu.gd" id="1"]
+[ext_resource type="Theme" path="res://ui/theme/menu_theme.tres" id="2"]
+[ext_resource type="Script" path="res://ui/theme/battle_background.gd" id="3"]
+[ext_resource type="Texture2D" path="res://ui/theme/battle_background.jpg" id="4"]
+[ext_resource type="Texture2D" path="res://ui/theme/king_portrait.png" id="5"]
+[ext_resource type="Texture2D" path="res://ui/theme/battle_background_tall.jpg" id="6"]
+[ext_resource type="Script" path="res://ui/theme/menu_slab.gd" id="7"]
 
-[node name="MainMenu" type="Control" node_paths=PackedStringArray("name_edit", "color_row", "create_button", "code_edit", "join_button", "language_option", "status_label")]
+[sub_resource type="StyleBoxFlat" id="portrait_frame"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.86, 0.16, 0.18, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.82, 0.36, 1)
+border_blend = true
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 5
+
+[node name="MainMenu" type="Control" node_paths=PackedStringArray("name_edit", "color_row", "portrait_frame", "create_button", "code_edit", "join_button", "language_option", "status_label")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("2")
 script = ExtResource("1")
 lobby_scene_path = "res://ui/lobby/lobby.tscn"
 match_scene_path = "res://ui/match/match.tscn"
-name_edit = NodePath("Center/Panel/Margin/Box/NameEdit")
-color_row = NodePath("Center/Panel/Margin/Box/Colors")
-create_button = NodePath("Center/Panel/Margin/Box/CreateButton")
-code_edit = NodePath("Center/Panel/Margin/Box/JoinRow/CodeEdit")
-join_button = NodePath("Center/Panel/Margin/Box/JoinRow/JoinButton")
-language_option = NodePath("Center/Panel/Margin/Box/LanguageRow/LanguageOption")
-status_label = NodePath("Center/Panel/Margin/Box/StatusLabel")
+name_edit = NodePath("Center/Column/Slab/Box/NamePanel/NameRow/NameBox/NameEdit")
+color_row = NodePath("Center/Column/Slab/Box/ColorPanel/ColorBox/Colors")
+portrait_frame = NodePath("Center/Column/Slab/Box/NamePanel/NameRow/PortraitFrame")
+create_button = NodePath("Center/Column/Slab/Box/RoomRow/CreateButton")
+code_edit = NodePath("Center/Column/Slab/Box/CodeRow/CodeEdit")
+join_button = NodePath("Center/Column/Slab/Box/RoomRow/JoinButton")
+language_option = NodePath("Center/Column/Slab/Box/LanguageRow/LanguageOption")
+status_label = NodePath("Center/Column/Slab/Box/StatusLabel")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.11, 0.08, 0.24, 1)
+mouse_filter = 2
+script = ExtResource("3")
+wide_picture = ExtResource("4")
+tall_picture = ExtResource("6")
 
 [node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
@@ -37,88 +63,143 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="PanelContainer" parent="Center"]
+[node name="Column" type="VBoxContainer" parent="Center"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="Margin" type="MarginContainer" parent="Center/Panel"]
+[node name="Title" type="Label" parent="Center/Column"]
 layout_mode = 2
-theme_override_constants/margin_left = 36
-theme_override_constants/margin_top = 28
-theme_override_constants/margin_right = 36
-theme_override_constants/margin_bottom = 28
-
-[node name="Box" type="VBoxContainer" parent="Center/Panel/Margin"]
-custom_minimum_size = Vector2(460, 0)
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="Title" type="Label" parent="Center/Panel/Margin/Box"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
-theme_override_font_sizes/font_size = 46
+theme_type_variation = &"TitleLabel"
 text = "UI_TITLE"
 horizontal_alignment = 1
+uppercase = true
 
-[node name="Subtitle" type="Label" parent="Center/Panel/Margin/Box"]
+[node name="Subtitle" type="Label" parent="Center/Column"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 17
 text = "UI_SUBTITLE"
 horizontal_alignment = 1
+uppercase = true
 
-[node name="NameLabel" type="Label" parent="Center/Panel/Margin/Box"]
+[node name="Gap" type="Control" parent="Center/Column"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="Slab" type="PanelContainer" parent="Center/Column"]
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("7")
+
+[node name="Box" type="VBoxContainer" parent="Center/Column/Slab"]
+custom_minimum_size = Vector2(470, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="NamePanel" type="PanelContainer" parent="Center/Column/Slab/Box"]
+layout_mode = 2
+theme_type_variation = &"WoodPanel"
+
+[node name="NameRow" type="HBoxContainer" parent="Center/Column/Slab/Box/NamePanel"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="NameBox" type="VBoxContainer" parent="Center/Column/Slab/Box/NamePanel/NameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="Center/Column/Slab/Box/NamePanel/NameRow/NameBox"]
 layout_mode = 2
 text = "UI_NAME_LABEL"
+uppercase = true
 
-[node name="NameEdit" type="LineEdit" parent="Center/Panel/Margin/Box"]
+[node name="NameEdit" type="LineEdit" parent="Center/Column/Slab/Box/NamePanel/NameRow/NameBox"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 placeholder_text = "UI_NAME_PLACEHOLDER"
 
-[node name="ColorLabel" type="Label" parent="Center/Panel/Margin/Box"]
+[node name="PortraitFrame" type="PanelContainer" parent="Center/Column/Slab/Box/NamePanel/NameRow"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("portrait_frame")
+
+[node name="Portrait" type="TextureRect" parent="Center/Column/Slab/Box/NamePanel/NameRow/PortraitFrame"]
+custom_minimum_size = Vector2(84, 84)
+layout_mode = 2
+texture = ExtResource("5")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ColorPanel" type="PanelContainer" parent="Center/Column/Slab/Box"]
+layout_mode = 2
+theme_type_variation = &"WoodPanel"
+
+[node name="ColorBox" type="VBoxContainer" parent="Center/Column/Slab/Box/ColorPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ColorLabel" type="Label" parent="Center/Column/Slab/Box/ColorPanel/ColorBox"]
 layout_mode = 2
 text = "UI_COLOR_LABEL"
+uppercase = true
 
-[node name="Colors" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+[node name="Colors" type="HBoxContainer" parent="Center/Column/Slab/Box/ColorPanel/ColorBox"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 alignment = 1
 
-[node name="CreateButton" type="Button" parent="Center/Panel/Margin/Box"]
-custom_minimum_size = Vector2(0, 48)
+[node name="RoomRow" type="HBoxContainer" parent="Center/Column/Slab/Box"]
 layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="CreateButton" type="Button" parent="Center/Column/Slab/Box/RoomRow"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_horizontal = 3
 text = "UI_CREATE_ROOM"
 
-[node name="JoinRow" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
+[node name="JoinButton" type="Button" parent="Center/Column/Slab/Box/RoomRow"]
+custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
-theme_override_constants/separation = 10
+size_flags_horizontal = 3
+text = "UI_JOIN_ROOM"
 
-[node name="CodeEdit" type="LineEdit" parent="Center/Panel/Margin/Box/JoinRow"]
+[node name="CodeRow" type="HBoxContainer" parent="Center/Column/Slab/Box"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="CodeLabel" type="Label" parent="Center/Column/Slab/Box/CodeRow"]
+layout_mode = 2
+text = "UI_ROOM_CODE_LABEL"
+uppercase = true
+
+[node name="CodeEdit" type="LineEdit" parent="Center/Column/Slab/Box/CodeRow"]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "UI_CODE_PLACEHOLDER"
 max_length = 12
 
-[node name="JoinButton" type="Button" parent="Center/Panel/Margin/Box/JoinRow"]
-custom_minimum_size = Vector2(180, 48)
+[node name="LanguageRow" type="HBoxContainer" parent="Center/Column/Slab/Box"]
 layout_mode = 2
-text = "UI_JOIN_ROOM"
+theme_override_constants/separation = 14
 
-[node name="LanguageRow" type="HBoxContainer" parent="Center/Panel/Margin/Box"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="LanguageLabel" type="Label" parent="Center/Panel/Margin/Box/LanguageRow"]
+[node name="LanguageLabel" type="Label" parent="Center/Column/Slab/Box/LanguageRow"]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "UI_LANGUAGE_LABEL"
+uppercase = true
 
-[node name="LanguageOption" type="OptionButton" parent="Center/Panel/Margin/Box/LanguageRow"]
-custom_minimum_size = Vector2(220, 0)
+[node name="LanguageOption" type="OptionButton" parent="Center/Column/Slab/Box/LanguageRow"]
+custom_minimum_size = Vector2(240, 44)
 layout_mode = 2
 
-[node name="StatusLabel" type="Label" parent="Center/Panel/Margin/Box"]
-custom_minimum_size = Vector2(0, 28)
+[node name="StatusLabel" type="Label" parent="Center/Column/Slab/Box"]
+custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.6, 0.5, 1)
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 autowrap_mode = 3
