@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://ui/match/match_view.gd" id="1"]
 [ext_resource type="PackedScene" path="res://board/board.tscn" id="2"]
@@ -7,6 +7,9 @@
 [ext_resource type="Script" path="res://ui/match/event_log.gd" id="5"]
 [ext_resource type="Script" path="res://ui/match/buy_popup.gd" id="6"]
 [ext_resource type="Script" path="res://ui/match/dice_view.gd" id="7"]
+[ext_resource type="Script" path="res://ui/match/card_view.gd" id="8"]
+[ext_resource type="Script" path="res://ui/match/toast_stack.gd" id="9"]
+[ext_resource type="Texture2D" path="res://board/icons/roulette.png" id="10"]
 
 [sub_resource type="StyleBoxFlat" id="popup_box"]
 bg_color = Color(0.13, 0.1, 0.26, 1)
@@ -23,22 +26,24 @@ shadow_color = Color(0, 0, 0, 0.5)
 shadow_size = 12
 
 [sub_resource type="StyleBoxFlat" id="card_box"]
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
-bg_color = Color(0.2, 0.06, 0.1, 0.96)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 0.4, 0.3, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
+content_margin_left = 22.0
+content_margin_top = 20.0
+content_margin_right = 22.0
+content_margin_bottom = 18.0
+bg_color = Color(0.22, 0.05, 0.09, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 0.84, 0.3, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 18
 
-[node name="Match" type="Node2D" node_paths=PackedStringArray("board", "kings_root", "players_hud", "action_panel", "buy_popup", "event_log", "card_panel", "card_title", "card_text", "leave_button")]
+[node name="Match" type="Node2D" node_paths=PackedStringArray("board", "kings_root", "players_hud", "action_panel", "buy_popup", "event_log", "card_view", "toasts", "leave_button")]
 script = ExtResource("1")
 main_menu_path = "res://ui/main_menu/main_menu.tscn"
 board = NodePath("Board")
@@ -47,9 +52,8 @@ players_hud = NodePath("HUD/PlayersHud")
 action_panel = NodePath("HUD/ActionPanel")
 buy_popup = NodePath("HUD/BuyPopup")
 event_log = NodePath("HUD/ActionPanel/EventLog")
-card_panel = NodePath("HUD/CardPanel")
-card_title = NodePath("HUD/CardPanel/Box/CardTitle")
-card_text = NodePath("HUD/CardPanel/Box/CardText")
+card_view = NodePath("HUD/CardView")
+toasts = NodePath("HUD/Toasts")
 leave_button = NodePath("HUD/LeaveButton")
 
 [node name="BackgroundLayer" type="CanvasLayer" parent="."]
@@ -65,7 +69,7 @@ mouse_filter = 2
 color = Color(0.11, 0.08, 0.24, 1)
 
 [node name="Board" parent="." instance=ExtResource("2")]
-transform = Transform2D(0.85, 0.425, -0.85, 0.425, 800, 96)
+transform = Transform2D(0.93, 0.5, -0.93, 0.5, 800, 50)
 
 [node name="Kings" type="Node2D" parent="."]
 
@@ -82,44 +86,18 @@ mouse_filter = 2
 script = ExtResource("3")
 
 [node name="LeaveButton" type="Button" parent="HUD"]
-offset_left = 720.0
-offset_top = 6.0
-offset_right = 880.0
-offset_bottom = 38.0
-theme_override_font_sizes/font_size = 13
+offset_left = 352.0
+offset_top = 10.0
+offset_right = 532.0
+offset_bottom = 52.0
+theme_override_font_sizes/font_size = 17
 text = "UI_LEAVE"
 
-[node name="CardPanel" type="PanelContainer" parent="HUD"]
-offset_left = 500.0
-offset_top = 826.0
-offset_right = 1100.0
-offset_bottom = 894.0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("card_box")
-
-[node name="Box" type="VBoxContainer" parent="HUD/CardPanel"]
-layout_mode = 2
-mouse_filter = 2
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="CardTitle" type="Label" parent="HUD/CardPanel/Box"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 0.55, 0.4, 1)
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-
-[node name="CardText" type="Label" parent="HUD/CardPanel/Box"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-horizontal_alignment = 1
-autowrap_mode = 3
-
-[node name="ActionPanel" type="VBoxContainer" parent="HUD" node_paths=PackedStringArray("turn_label", "total_label", "dice_view", "prompt_label", "roll_button", "offer_box", "offer_value_label", "offer_slider", "offer_button", "response_box", "accept_button", "refuse_button", "skip_button", "timer_label")]
-offset_left = 570.0
-offset_top = 306.0
-offset_right = 1030.0
-offset_bottom = 594.0
+[node name="ActionPanel" type="VBoxContainer" parent="HUD" node_paths=PackedStringArray("turn_label", "total_label", "dice_view", "prompt_label", "roll_button", "offer_box", "offer_value_label", "offer_slider", "offer_button", "response_box", "accept_button", "refuse_button", "skip_button", "settle_button", "timer_label")]
+offset_left = 540.0
+offset_top = 282.0
+offset_right = 1060.0
+offset_bottom = 642.0
 mouse_filter = 2
 theme_override_constants/separation = 4
 alignment = 1
@@ -137,28 +115,31 @@ response_box = NodePath("ResponseBox")
 accept_button = NodePath("ResponseBox/AcceptButton")
 refuse_button = NodePath("ResponseBox/RefuseButton")
 skip_button = NodePath("SkipButton")
+settle_button = NodePath("SettleButton")
 timer_label = NodePath("TimerLabel")
 
 [node name="TurnLabel" type="Label" parent="HUD/ActionPanel"]
 auto_translate_mode = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.2, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 26
 horizontal_alignment = 1
 
 [node name="TotalLabel" type="Label" parent="HUD/ActionPanel"]
 auto_translate_mode = 2
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.2, 1)
 theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 38
+theme_override_font_sizes/font_size = 44
 horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="DiceView" type="Control" parent="HUD/ActionPanel"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("7")
@@ -166,15 +147,17 @@ script = ExtResource("7")
 [node name="PromptLabel" type="Label" parent="HUD/ActionPanel"]
 auto_translate_mode = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
+theme_override_colors/font_outline_color = Color(0.1, 0.05, 0.2, 1)
+theme_override_constants/outline_size = 6
+theme_override_font_sizes/font_size = 20
 horizontal_alignment = 1
 autowrap_mode = 3
 
 [node name="RollButton" type="Button" parent="HUD/ActionPanel"]
-custom_minimum_size = Vector2(260, 48)
+custom_minimum_size = Vector2(320, 60)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 26
 text = "UI_ROLL"
 
 [node name="OfferBox" type="VBoxContainer" parent="HUD/ActionPanel"]
@@ -184,15 +167,17 @@ theme_override_constants/separation = 6
 [node name="OfferValueLabel" type="Label" parent="HUD/ActionPanel/OfferBox"]
 auto_translate_mode = 2
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
 
 [node name="OfferSlider" type="HSlider" parent="HUD/ActionPanel/OfferBox"]
 layout_mode = 2
 
 [node name="OfferButton" type="Button" parent="HUD/ActionPanel/OfferBox"]
-custom_minimum_size = Vector2(260, 40)
+custom_minimum_size = Vector2(300, 50)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
 text = "UI_OFFER_SEND"
 
 [node name="ResponseBox" type="HBoxContainer" parent="HUD/ActionPanel"]
@@ -201,31 +186,41 @@ theme_override_constants/separation = 10
 alignment = 1
 
 [node name="AcceptButton" type="Button" parent="HUD/ActionPanel/ResponseBox"]
-custom_minimum_size = Vector2(160, 42)
+custom_minimum_size = Vector2(190, 52)
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "UI_ACCEPT"
 
 [node name="RefuseButton" type="Button" parent="HUD/ActionPanel/ResponseBox"]
-custom_minimum_size = Vector2(160, 42)
+custom_minimum_size = Vector2(190, 52)
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "UI_REFUSE"
 
 [node name="SkipButton" type="Button" parent="HUD/ActionPanel"]
-custom_minimum_size = Vector2(200, 36)
+custom_minimum_size = Vector2(240, 46)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
 text = "UI_SKIP"
+
+[node name="SettleButton" type="Button" parent="HUD/ActionPanel"]
+auto_translate_mode = 2
+custom_minimum_size = Vector2(340, 56)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
 
 [node name="TimerLabel" type="Label" parent="HUD/ActionPanel"]
 auto_translate_mode = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 17
 horizontal_alignment = 1
 
 [node name="EventLog" type="RichTextLabel" parent="HUD/ActionPanel"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 46)
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 12
+theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
 scroll_following = true
 script = ExtResource("5")
@@ -255,11 +250,12 @@ theme_override_constants/separation = 10
 [node name="TitleLabel" type="Label" parent="HUD/BuyPopup/Margin/Box"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 32
 horizontal_alignment = 1
 
 [node name="Caption" type="Label" parent="HUD/BuyPopup/Margin/Box"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "UI_BUY_CAPTION"
 horizontal_alignment = 1
 
@@ -269,7 +265,89 @@ theme_override_constants/separation = 12
 alignment = 1
 
 [node name="SkipButton" type="Button" parent="HUD/BuyPopup/Margin/Box"]
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(240, 48)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 20
 text = "UI_SKIP"
+
+[node name="CardView" type="Control" parent="HUD" node_paths=PackedStringArray("card", "title_label", "text_label", "owner_label")]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 640.0
+offset_top = 242.0
+offset_right = 960.0
+offset_bottom = 682.0
+mouse_filter = 2
+script = ExtResource("8")
+card = NodePath("Card")
+title_label = NodePath("Card/Box/CardTitle")
+text_label = NodePath("Card/Box/CardText")
+owner_label = NodePath("Card/Box/OwnerLabel")
+
+[node name="Card" type="PanelContainer" parent="HUD/CardView"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("card_box")
+
+[node name="Box" type="VBoxContainer" parent="HUD/CardView/Card"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 10
+
+[node name="Header" type="Label" parent="HUD/CardView/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0.3, 1)
+theme_override_font_sizes/font_size = 16
+text = "TILE_ROULETTE"
+horizontal_alignment = 1
+uppercase = true
+
+[node name="Picture" type="TextureRect" parent="HUD/CardView/Card/Box"]
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("10")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CardTitle" type="Label" parent="HUD/CardView/Card/Box"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.62, 0.42, 1)
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Rule" type="HSeparator" parent="HUD/CardView/Card/Box"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="CardText" type="Label" parent="HUD/CardView/Card/Box"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="OwnerLabel" type="Label" parent="HUD/CardView/Card/Box"]
+auto_translate_mode = 2
+modulate = Color(1, 1, 1, 0.7)
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="Toasts" type="VBoxContainer" parent="HUD"]
+offset_left = 420.0
+offset_top = 56.0
+offset_right = 1180.0
+offset_bottom = 284.0
+mouse_filter = 2
+theme_override_constants/separation = 8
+alignment = 2
+script = ExtResource("9")

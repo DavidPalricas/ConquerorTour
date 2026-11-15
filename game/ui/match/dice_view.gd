@@ -11,8 +11,8 @@ const ROLL_SECONDS := 0.9
 ## How often a tumbling die changes face.
 const FACE_SECONDS := 0.07
 
-const DIE_SIZE := 46.0
-const GAP := 16.0
+const DIE_SIZE := 58.0
+const GAP := 20.0
 const MAX_TILT := 0.5
 
 const FACE_COLOR := Color(0.97, 0.96, 0.92)
@@ -110,5 +110,5 @@ func _draw_die(face: int) -> void:
 	else:
 		# Dice with more than six sides (see GameConfig.dice_sides) show the number.
 		var font: Font = get_theme_default_font()
-		draw_string(font, Vector2(-DIE_SIZE / 2.0, 8), str(face), HORIZONTAL_ALIGNMENT_CENTER,
-				DIE_SIZE, 22, PIP_COLOR)
+		draw_string(font, Vector2(-DIE_SIZE / 2.0, 10), str(face), HORIZONTAL_ALIGNMENT_CENTER,
+				DIE_SIZE, 28, PIP_COLOR)

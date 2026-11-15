@@ -21,7 +21,20 @@ static func decide(state: GameState, cfg: GameConfig) -> Dictionary:
 		GameEnums.Phase.TARGET:
 			return _pick_target(state)
 
+		GameEnums.Phase.SELL:
+			return _settle(state, cfg)
+
 	return Intent.make(Intent.SKIP)
+
+# Borrows when Lucifer lends; otherwise sells until the payment is covered.
+static func _settle(state: GameState, cfg: GameConfig) -> Dictionary:
+	var pending: Dictionary = state.pending
+	var missing: int = int(pending.due) - int(state.players[state.actor].money)
+
+	if missing > 0 and not pending.targets.is_empty() \
+			and not Bank.can_borrow(state, cfg, state.actor, missing):
+		return Intent.sell(pending.targets[0])
+	return Intent.make(Intent.SETTLE)
 
 static func _pick_target(state: GameState) -> Dictionary:
 	var targets: Array = state.pending.targets

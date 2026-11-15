@@ -37,6 +37,8 @@ class_name GameConfig extends Resource
 @export var tax_rate: float = 0.10
 ## A loan is refused when the missing amount is above this many times the net worth.
 @export var loan_limit_multiplier: float = 2.0
+## What Lucifer pays for a property sold to cover a payment, as a fraction of its invested value.
+@export var sell_value_multiplier: float = 1.0
 ## Turns spent in Hell.
 @export var hell_turns: int = 3
 ## Amount each other player gives to whoever draws Lucifer Gift.

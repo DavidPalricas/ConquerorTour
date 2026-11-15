@@ -24,6 +24,12 @@ static func receive(state: GameState, pid: int, amount: int) -> void:
 
 	p.money += kept
 
+## Whether Lucifer lends [param missing] to the player: one loan at a time, and never above
+## the loan limit.
+static func can_borrow(state: GameState, cfg: GameConfig, pid: int, missing: int) -> bool:
+	var limit: float = cfg.loan_limit_multiplier * Economy.net_worth(state, cfg, pid)
+	return state.players[pid].debt == 0 and missing <= limit
+
 ## Mandatory payment (rent, tax or card). When the money is not enough, Lucifer lends exactly
 ## what is missing, unless the player already has a debt or the missing amount is above the
 ## loan limit: then the player goes bankrupt. Returns whether the payment was made in full.
@@ -34,8 +40,7 @@ static func pay(state: GameState, cfg: GameConfig, pid: int, amount: int, payee:
 
 	if p.money < amount:
 		var missing: int = amount - int(p.money)
-		var limit: float = cfg.loan_limit_multiplier * Economy.net_worth(state, cfg, pid)
-		if p.debt > 0 or missing > limit:
+		if not can_borrow(state, cfg, pid, missing):
 			bankrupt(state, pid)
 			return false
 

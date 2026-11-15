@@ -24,6 +24,11 @@ signal message_received(peer_id: String, message: Dictionary)
 @warning_ignore("unused_signal")
 signal failed(error_key: String)
 
+## Message sent to every peer when the page is closed without leaving the room first.
+## Only the web can do it; elsewhere this does nothing.
+func set_farewell(_message: Dictionary) -> void:
+	pass
+
 ## Opens a room that others join with [param code].
 @abstract func host(code: String) -> void
 

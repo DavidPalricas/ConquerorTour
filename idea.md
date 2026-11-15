@@ -275,6 +275,14 @@ Implementado e testado no código (14/11/2026).
 - **Dados:** o botão de lançar fica no centro do ecrã. Os dados têm animação a rodar e, por cima, aparece o **total** (por exemplo 10, e não 5 + 5).
 - **Pop-up de compra:** cada opção mostra o ícone do que se compra (terreno, barraca, casa, castelo ou igreja) por cima do nome e do preço.
 
+### 5.13 Vender propriedades para pagar (15/11/2026)
+
+- Quando o jogador não tem dinheiro para um pagamento obrigatório (renda, imposto, carta) **e tem propriedades**, o turno espera por ele: pode **vender propriedades ao Lucifer**, clicando nelas, até cobrir o pagamento. Só se vende enquanto o dinheiro não chega.
+- A venda paga o **valor investido** da propriedade (multiplicador `sell_value_multiplier` na configuração, 1,0 por defeito) e o terreno fica livre. O dinheiro da venda entra nas regras da penhora (5.9).
+- O jogador fecha o pagamento com um botão: **paga** se já tiver o dinheiro; caso contrário o que falta segue a regra de 5.9 (**empréstimo** se o Lucifer emprestar, senão **falência**).
+- Sem propriedades, mantém-se a regra antiga: empréstimo ou falência imediatos.
+- O bot pede o empréstimo quando pode e só vende quando o Lucifer não empresta.
+
 ## 6. A confirmar
 
 Sem pontos em aberto nas regras acima. Se surgir uma regra ambígua durante o desenvolvimento, propor um valor por defeito e confirmar com o utilizador.

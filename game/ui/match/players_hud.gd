@@ -11,16 +11,26 @@ const STACK_GAP := 6.0
 # Player id -> PlayerCard.
 var _cards: Dictionary = {}
 
+func _ready() -> void:
+	# The corners move when the screen is refitted (see ScreenFit), after the cards exist.
+	resized.connect(_place_cards)
+
 func refresh(state: GameState) -> void:
 	for p: Dictionary in state.players:
 		if not _cards.has(p.id):
 			var card: PlayerCard = CARD_SCENE.instantiate()
 			add_child(card)
-			card.position = _slot(p.id, card.custom_minimum_size)
 			_cards[p.id] = card
+			card.position = _slot(p.id, card.custom_minimum_size)
 
 		var is_turn: bool = p.id == state.turn and state.winner < 0
 		(_cards[p.id] as PlayerCard).refresh(p, is_turn)
+
+# Connected in _ready() to resized.
+func _place_cards() -> void:
+	for id: int in _cards:
+		var card: PlayerCard = _cards[id]
+		card.position = _slot(id, card.custom_minimum_size)
 
 # Corners in order: top-left, top-right, bottom-left, bottom-right. Players beyond the
 # fourth go one step towards the middle of the same corners.

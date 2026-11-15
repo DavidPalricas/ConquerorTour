@@ -4,8 +4,9 @@
 ## The options come from the host (state.pending.options); this only sends the choice.
 class_name BuyPopup extends PanelContainer
 
-const OPTION_SIZE := Vector2(170, 150)
-const ICON_WIDTH := 72
+const OPTION_SIZE := Vector2(200, 180)
+const ICON_WIDTH := 92
+const OPTION_FONT_SIZE := 20
 
 ## Name of the property. Its text is a translation key.
 @export var title_label: Label = null
@@ -16,7 +17,7 @@ const ICON_WIDTH := 72
 @export var skip_button: Button = null
 
 ## Point of the screen the pop-up is centred on.
-@export var centre: Vector2 = Vector2(800, 450)
+@export var centre: Vector2 = Vector2(800, 462)
 
 # Changes with every refresh, so a delayed opening knows when it is out of date.
 var _version: int = 0
@@ -60,6 +61,7 @@ func refresh(state: GameState, delay: float = 0.0) -> void:
 func _make_button(tile: Dictionary, option: Dictionary) -> Button:
 	var button := Button.new()
 	button.custom_minimum_size = OPTION_SIZE
+	button.add_theme_font_size_override("font_size", OPTION_FONT_SIZE)
 
 	# The picture of what is bought, above its name.
 	button.icon = _picture(tile, option.level)

@@ -4,10 +4,14 @@ class_name EventLog extends RichTextLabel
 
 func add_events(events: Array, state: GameState) -> void:
 	for event: Dictionary in events:
-		append_text(_describe(event, state) + "\n")
+		append_text(describe(event, state) + "\n")
 
-func _describe(event: Dictionary, state: GameState) -> String:
+## Text of [param event] in the language of this player, as BBCode.
+func describe(event: Dictionary, state: GameState) -> String:
 	var args: Dictionary = {}
+	var key: String = GameEnums.event_key(event.e)
+	if event.e == GameEnums.Event.CANT_PAY:
+		key = GameEnums.cant_pay_key(event.k)
 
 	if event.has("p"):
 		args["player"] = _player(state, event.p)
@@ -28,7 +32,7 @@ func _describe(event: Dictionary, state: GameState) -> String:
 	if event.has("d"):
 		args["dice"] = " + ".join(event.d.map(func(value: int) -> String: return str(value)))
 
-	return tr(GameEnums.event_key(event.e)).format(args)
+	return tr(key).format(args)
 
 # The name in the colour of the king. "[" is escaped so a name cannot inject BBCode.
 func _player(state: GameState, pid: int) -> String:

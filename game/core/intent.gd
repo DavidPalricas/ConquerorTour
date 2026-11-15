@@ -9,6 +9,8 @@ const OFFER := "offer"
 const ACCEPT := "accept"
 const REFUSE := "refuse"
 const TARGET := "target"
+const SELL := "sell"
+const SETTLE := "settle"
 
 static func make(type: String) -> Dictionary:
 	return {"type": type}
@@ -21,3 +23,6 @@ static func offer(price: int) -> Dictionary:
 
 static func target(tile: int) -> Dictionary:
 	return {"type": TARGET, "tile": tile}
+
+static func sell(tile: int) -> Dictionary:
+	return {"type": SELL, "tile": tile}

@@ -6,9 +6,9 @@
 ## call this node and listen to the EventBus.
 ##
 ## Messages (field "t" is the type):
-##   client -> host: hello { name, color }, ready { v }, intent { i }
+##   client -> host: hello { name, color, dev }, ready { v }, intent { i }, bye
 ##   host -> client: welcome { pid }, lobby { code, players }, start { pid },
-##                   state { s, ev }, reject { reason }
+##                   state { s, ev }, reject { reason }, bye
 extends Node
 
 enum Role { NONE, HOST, CLIENT }
@@ -18,6 +18,10 @@ const BOARD_SCENE := preload("res://board/board.tscn")
 const CONFIG: GameConfig = preload("res://config/game_config.tres")
 
 const MAX_NAME_LENGTH := 16
+const MAX_DEVICE_LENGTH := 64
+
+## Said before leaving. The network does not always notice by itself that a peer is gone.
+const BYE := {"t": "bye"}
 
 var role: Role = Role.NONE
 var room_code: String = ""
@@ -42,6 +46,9 @@ var _engine: MatchEngine = null
 # Host: PeerJS id of each client -> player id.
 var _peers: Dictionary = {}
 var _next_id: int = 0
+
+# Host: player id -> device id (see Settings.device_id) of each remote player.
+var _devices: Dictionary = {}
 
 # Client: connection to the host, and what to say on arrival.
 var _host_peer: String = ""
@@ -75,7 +82,8 @@ func join_room(code: String, player_name: String, color: int) -> void:
 	leave()
 	role = Role.CLIENT
 	room_code = RoomCode.normalise(code)
-	_hello = {"t": "hello", "name": _clean_name(player_name), "color": color}
+	_hello = {"t": "hello", "name": _clean_name(player_name), "color": color,
+			"dev": Settings.device_id}
 
 	_open_transport()
 	_transport.join(room_code)
@@ -119,6 +127,10 @@ func start_match() -> void:
 	local_ids = local_ids.map(func(id: int) -> int: return new_ids[id])
 	for peer: String in _peers:
 		_peers[peer] = new_ids[_peers[peer]]
+	var devices: Dictionary = {}
+	for id: int in _devices:
+		devices[new_ids[id]] = _devices[id]
+	_devices = devices
 
 	var board: Board = BOARD_SCENE.instantiate()
 	var board_def: Array = board.to_definition()
@@ -160,6 +172,7 @@ func _open_transport() -> void:
 	_transport.peer_disconnected.connect(_on_peer_disconnected)
 	_transport.message_received.connect(_on_message)
 	_transport.failed.connect(_on_failed)
+	_transport.set_farewell(BYE)
 
 func _on_opened() -> void:
 	_entered = true
@@ -187,6 +200,7 @@ func _on_peer_disconnected(peer_id: String) -> void:
 		# The bot plays until the player comes back with the same name.
 		_engine.set_bot(pid, true)
 	else:
+		_devices.erase(pid)
 		lobby = lobby.filter(func(entry: Dictionary) -> bool: return entry.id != pid)
 		_sync_lobby()
 
@@ -210,21 +224,34 @@ func _host_handle(peer_id: String, message: Dictionary) -> void:
 			if _peers.has(peer_id) and in_match and intent is Dictionary:
 				# The engine refuses it unless this player is the one who has to act.
 				_engine.submit_intent(_peers[peer_id], GameState.normalise(intent))
+		"bye":
+			_on_peer_disconnected(peer_id)
 
 func _host_hello(peer_id: String, message: Dictionary) -> void:
 	if _peers.has(peer_id):
 		return
 	var player_name: String = _clean_name(str(message.get("name", "")))
 	var color: int = clampi(int(message.get("color", 0)), 0, KingPalette.COLORS.size() - 1)
+	var device: String = str(message.get("dev", "")).left(MAX_DEVICE_LENGTH)
 
 	if in_match:
-		var pid: int = _find_returning_player(player_name)
+		var pid: int = _find_returning_player(player_name, device)
 		if pid < 0:
 			_transport.send(peer_id, {"t": "reject", "reason": "ERR_MATCH_IN_PROGRESS"})
 			return
-		_peers[peer_id] = pid
+		_take_seat(peer_id, pid, device)
 		_transport.send(peer_id, {"t": "start", "pid": pid})
+		_transport.send(peer_id, {"t": "state", "s": snapshot, "ev": []})
 		_engine.set_bot(pid, false)
+		return
+
+	# The same device again (another tab, or back after leaving): it keeps the seat and the
+	# name it already had instead of coming in as one more player.
+	var seat: int = _seat_of_device(device)
+	if seat >= 0:
+		_take_seat(peer_id, seat, device)
+		_transport.send(peer_id, {"t": "welcome", "pid": seat})
+		_set_ready(seat, false)
 		return
 
 	if lobby.size() >= CONFIG.max_players:
@@ -232,12 +259,36 @@ func _host_hello(peer_id: String, message: Dictionary) -> void:
 		return
 
 	var entry: Dictionary = _add_to_lobby(player_name, color)
-	_peers[peer_id] = entry.id
+	_take_seat(peer_id, entry.id, device)
 	_transport.send(peer_id, {"t": "welcome", "pid": entry.id})
 	_sync_lobby()
 
-# A player who dropped out is recognised by name: the one a bot is playing for.
-func _find_returning_player(player_name: String) -> int:
+# Gives the seat of player [param pid] to this connection. Whoever was sitting there (the
+# same device in another tab) is sent away.
+func _take_seat(peer_id: String, pid: int, device: String) -> void:
+	for other: String in _peers.keys():
+		if _peers[other] == pid:
+			_peers.erase(other)
+			_transport.send(other, {"t": "reject", "reason": "ERR_REPLACED"})
+	_peers[peer_id] = pid
+	if device != "":
+		_devices[pid] = device
+
+# Seat a device already has in this room, or -1.
+func _seat_of_device(device: String) -> int:
+	if device == "":
+		return -1
+	for pid: int in _devices:
+		if _devices[pid] == device:
+			return pid
+	return -1
+
+# A player coming back to a running match is recognised by the device, or else by name:
+# the one a bot is playing for.
+func _find_returning_player(player_name: String, device: String) -> int:
+	var seat: int = _seat_of_device(device)
+	if seat >= 0:
+		return seat
 	for p: Dictionary in _engine.state.players:
 		if p.bot and p.name == player_name and not _peers.values().has(p.id):
 			return p.id
@@ -313,6 +364,8 @@ func _client_handle(message: Dictionary) -> void:
 			EventBus.match_updated.emit(snapshot, data.get("ev", []))
 		"reject":
 			_close(str(data.get("reason", "ERR_NETWORK")), true)
+		"bye":
+			_close("ERR_HOST_LEFT", true)
 
 # ====== Shared ======
 
@@ -320,6 +373,11 @@ func _close(reason_key: String, notify: bool) -> void:
 	var was_open: bool = role != Role.NONE
 
 	if _transport != null:
+		# Tells the others, so they do not keep this player (or this room) around.
+		if role == Role.HOST:
+			_transport.broadcast(BYE)
+		elif _host_peer != "":
+			_transport.send(_host_peer, BYE)
 		_transport.close()
 		_transport = null
 	if _engine != null:
@@ -333,6 +391,7 @@ func _close(reason_key: String, notify: bool) -> void:
 	snapshot = {}
 	in_match = false
 	_peers = {}
+	_devices = {}
 	_host_peer = ""
 	_entered = false
 

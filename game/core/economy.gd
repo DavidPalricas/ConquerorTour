@@ -31,6 +31,10 @@ static func tile_invested(state: GameState, cfg: GameConfig, index: int) -> int:
 		return 0
 	return invested_value(cfg, state.board[index], ts.level)
 
+## What the owner gets for selling the property to Lucifer to cover a payment.
+static func sale_value(state: GameState, cfg: GameConfig, index: int) -> int:
+	return roundi(tile_invested(state, cfg, index) * cfg.sell_value_multiplier)
+
 static func total_invested(state: GameState, cfg: GameConfig, pid: int) -> int:
 	var total := 0
 	for index: int in state.owned_by(pid):

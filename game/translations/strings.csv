@@ -40,6 +40,10 @@ UI_DEBT,Still owes {amount},Faltam pagar {amount}
 UI_STATUS_HELL,In Hell: {count} turns left,No Inferno: faltam {count} turnos
 UI_STATUS_BANKRUPT,Bankrupt,Falido
 UI_WINNER,{player} wins!,{player} venceu!
+UI_SETTLE_PAY,Pay {amount},Pagar {amount}
+UI_SETTLE_LOAN,Borrow {amount} from Lucifer,Pedir {amount} emprestados ao Lucifer
+UI_SETTLE_BANKRUPT,Declare bankruptcy,Declarar falência
+UI_CARD_DRAWN_BY,Drawn by {player},Carta de {player}
 UI_BACK_TO_MENU,Back to menu,Voltar ao menu
 PROMPT_ROLL,It is your turn. Roll the dice.,É a tua vez. Lança os dados.
 PROMPT_WAITING,Waiting for {player}…,À espera de {player}…
@@ -49,6 +53,8 @@ PROMPT_OFFER_RESPONSE,{player} offers you {amount} for {tile}.,{player} oferece-
 PROMPT_OFFER_PENDING,{player} offered {other} {amount} for {tile}.,{player} ofereceu {amount} a {other} por {tile}.
 PROMPT_TARGET_POPE,The Pope calls you: click one of your properties or a free one.,O Papa chama-te: clica numa das tuas propriedades ou numa livre.
 PROMPT_TARGET_INVASION,King's Invasion: click the property you want to destroy.,King's Invasion: clica na propriedade que queres destruir.
+PROMPT_SELL,You are {amount} short of the {total} you owe. Click your properties to sell them to Lucifer.,Faltam-te {amount} para pagares {total}. Clica nas tuas propriedades para as venderes ao Lucifer.
+PROMPT_SELL_READY,You now have the {total} you owe.,Já tens os {total} que deves.
 PROMPT_TARGET_SHIELD,Shield: click the property you want to protect.,Shield: clica na propriedade que queres proteger.
 TILE_START,Start,Partida
 TILE_HELL,Hell,Inferno
@@ -132,6 +138,15 @@ EV_BANKRUPT,{player} went bankrupt.,{player} foi à falência.
 EV_PLAYER_LEFT,{player} dropped out. A bot plays in the meantime.,{player} caiu. Um bot joga entretanto.
 EV_PLAYER_RETURNED,{player} is back.,{player} voltou.
 EV_EXTRA_TURN,{player} rolled a double and plays again.,{player} tirou dobles e joga outra vez.
+EV_CANT_PAY_RENT,{player} does not have the money to pay the rent of {amount}.,{player} não tem dinheiro para pagar a renda de {amount}.
+EV_CANT_PAY_TAX,{player} does not have the money to pay the tax of {amount}.,{player} não tem dinheiro para pagar o imposto de {amount}.
+EV_CANT_PAY_DEBT_CARD,{player} does not have the money to pay the Lucifer Debt of {amount}.,{player} não tem dinheiro para pagar a Lucifer Debt de {amount}.
+EV_CANT_PAY_GIFT,{player} does not have the money to give {amount}.,{player} não tem dinheiro para dar {amount}.
+EV_CANT_BUY,{player} does not have the money to buy {tile}.,{player} não tem dinheiro para comprar {tile}.
+EV_CANT_UPGRADE,{player} does not have the money to upgrade {tile}.,{player} não tem dinheiro para melhorar {tile}.
+EV_CANT_OFFER,{player} does not have the money to make an offer for {tile}.,{player} não tem dinheiro para fazer uma proposta por {tile}.
+EV_PROPERTY_SOLD,{player} sold {tile} to Lucifer for {amount}.,{player} vendeu {tile} ao Lucifer por {amount}.
+EV_POPE_CALLED,The Pope calls {player}: they choose where to go.,O Papa chama {player}: escolhe para onde vai.
 EV_WON,{player} won the match. {reason},{player} venceu a partida. {reason}
 WIN_NONE,,
 WIN_LINE,A whole line of the board.,Uma linha inteira do tabuleiro.
@@ -145,6 +160,7 @@ ERR_ROOM_FULL,The room is full.,A sala está cheia.
 ERR_CODE_TAKEN,That room code is in use. Try again.,Esse código de sala está em uso. Tenta outra vez.
 ERR_MATCH_IN_PROGRESS,The match has already started.,A partida já começou.
 ERR_HOST_LEFT,The host left. The match is over.,O anfitrião saiu. A partida terminou.
+ERR_REPLACED,You opened this room in another tab. This one was left behind.,Abriste esta sala noutro separador. Este ficou para trás.
 ERR_NETWORK,Network error. Try again.,Erro de rede. Tenta outra vez.
 ERR_NO_PEERJS,The network library could not be loaded.,Não foi possível carregar a biblioteca de rede.
 ERR_BROWSER,This browser does not support the connection the game needs.,Este browser não suporta a ligação de que o jogo precisa.

@@ -19,7 +19,10 @@ const ERROR_KEYS := {
 const BRIDGE_SOURCE := """
 (function () {
 	if (window.ctNet) { return; }
-	var peer = null, conns = {}, cb = null;
+	var peer = null, conns = {}, cb = null, farewell = "";
+
+	// Changes whenever a room is opened or closed, so late events of an old room are ignored.
+	var session = 0;
 
 	function emit(type, id, data) { if (cb) { cb(type, id || "", data || ""); } }
 
@@ -31,39 +34,70 @@ const BRIDGE_SOURCE := """
 	}
 
 	function wire(conn) {
-		conn.on("open", function () { conns[conn.peer] = conn; emit("connected", conn.peer); });
-		conn.on("data", function (data) { emit("data", conn.peer, String(data)); });
+		var mine = session;
+		conn.on("open", function () {
+			if (mine !== session) { conn.close(); return; }
+			conns[conn.peer] = conn;
+			emit("connected", conn.peer);
+
+			// PeerJS does not fire "close" in every browser when the other side goes away:
+			// watch the WebRTC connection itself too.
+			var pc = conn.peerConnection;
+			if (pc) {
+				pc.addEventListener("iceconnectionstatechange", function () {
+					var s = pc.iceConnectionState;
+					if (s === "failed" || s === "closed") { drop(conn); }
+				});
+			}
+		});
+		conn.on("data", function (data) {
+			if (conns[conn.peer] === conn) { emit("data", conn.peer, String(data)); }
+		});
 		conn.on("close", function () { drop(conn); });
 		conn.on("error", function () { drop(conn); });
 	}
 
 	function start(id) {
 		if (typeof Peer === "undefined") { emit("error", "", "no-peerjs"); return null; }
-		peer = id ? new Peer(id) : new Peer();
-		peer.on("error", function (e) { emit("error", "", (e && e.type) || "unknown"); });
+		session++;
+		var p = id ? new Peer(id) : new Peer();
+		peer = p;
+		p.on("error", function (e) { if (p === peer) { emit("error", "", (e && e.type) || "unknown"); } });
 		// Losing the signalling server does not close the game connections: just go back to it.
-		peer.on("disconnected", function () { if (peer && !peer.destroyed) { peer.reconnect(); } });
-		return peer;
+		p.on("disconnected", function () { if (p === peer && !p.destroyed) { p.reconnect(); } });
+		return p;
 	}
+
+	// Closing the tab does not run the game's own leave: say goodbye from here.
+	window.addEventListener("pagehide", function () {
+		if (!farewell) { return; }
+		for (var id in conns) { try { conns[id].send(farewell); } catch (e) {} }
+	});
 
 	window.ctNet = {
 		setCallback: function (f) { cb = f; },
+		setFarewell: function (text) { farewell = text || ""; },
 		host: function (id) {
 			var p = start(id);
 			if (!p) { return; }
-			p.on("open", function () { emit("open", id); });
-			p.on("connection", wire);
+			p.on("open", function () { if (p === peer) { emit("open", id); } });
+			p.on("connection", function (conn) { if (p === peer) { wire(conn); } });
 		},
 		join: function (hostId) {
 			var p = start("");
 			if (!p) { return; }
-			p.on("open", function () { wire(p.connect(hostId, { reliable: true })); });
+			p.on("open", function () { if (p === peer) { wire(p.connect(hostId, { reliable: true })); } });
 		},
 		send: function (id, text) { var c = conns[id]; if (c && c.open) { c.send(text); } },
 		broadcast: function (text) {
 			for (var id in conns) { if (conns[id].open) { conns[id].send(text); } }
 		},
-		close: function () { conns = {}; if (peer) { peer.destroy(); peer = null; } }
+		close: function () {
+			var old = peer;
+			peer = null; conns = {}; farewell = ""; session++;
+			// The last messages (the goodbye) need a moment to leave before the teardown.
+			if (old) { setTimeout(function () { old.destroy(); }, 400); }
+		}
 	};
 })();
 """
@@ -84,6 +118,10 @@ func host(code: String) -> void:
 func join(code: String) -> void:
 	if _connect_bridge():
 		_js.join(ID_PREFIX + code)
+
+func set_farewell(message: Dictionary) -> void:
+	if _js != null:
+		_js.setFarewell(JSON.stringify(message))
 
 func send(peer_id: String, message: Dictionary) -> void:
 	if _js != null:

@@ -8,6 +8,33 @@ extends Node
 const ENGINE_SCENE := preload("res://engine/match_engine.tscn")
 const BOARD_SCENE := preload("res://board/board.tscn")
 
+## Stands in for the network: remembers what the session sends to each peer.
+class FakeTransport extends Transport:
+	var sent: Array = []
+
+	func host(_code: String) -> void:
+		pass
+
+	func join(_code: String) -> void:
+		pass
+
+	func send(peer_id: String, message: Dictionary) -> void:
+		sent.append({"to": peer_id, "m": message})
+
+	func broadcast(message: Dictionary) -> void:
+		sent.append({"to": "*", "m": message})
+
+	func close() -> void:
+		pass
+
+	## Types of the messages sent to [param peer_id], in order.
+	func types_for(peer_id: String) -> Array:
+		var types: Array = []
+		for entry: Dictionary in sent:
+			if entry.to == peer_id:
+				types.append(entry.m.t)
+		return types
+
 var _board_def: Array = []
 var _checks: int = 0
 var _failures: int = 0
@@ -309,6 +336,9 @@ func test_loan_and_garnishment() -> void:
 	e.state.players[0].money = rent - 30_000
 
 	_land(e, 0, lisbon)
+	_eq(e.state.phase, GameEnums.Phase.SELL, "short of money with a property: may sell first")
+	_ok(e.submit_intent(0, Intent.make(Intent.SETTLE)), "settles without selling")
+	_eq(e.state.tiles[_tile("CITY_PARIS")].owner, 0, "property kept")
 	_eq(e.state.players[0].debt, 30_000, "loan is exactly what was missing")
 	_eq(e.state.players[0].money, 0, "no change kept")
 	_ok(not e.state.players[0].bankrupt, "still in the match")
@@ -347,10 +377,104 @@ func test_second_loan_means_bankruptcy() -> void:
 	e.state.players[0].debt = 10_000
 
 	_land(e, 0, lisbon)
+	_ok(e.submit_intent(0, Intent.make(Intent.SETTLE)), "gives up without selling")
 	_ok(e.state.players[0].bankrupt, "in debt and unable to pay: bankrupt")
 	_eq(e.state.players[0].debt, 0, "the debt disappears")
 	_eq(e.state.tiles[paris].owner, -1, "properties become free")
 	_eq(e.state.tiles[paris].level, 0, "buildings are gone")
+	e.free()
+
+func test_selling_covers_a_rent() -> void:
+	var e := _engine(2)
+	var lisbon: int = _tile("CITY_LISBON")
+	var paris: int = _tile("CITY_PARIS")
+	var lyon: int = _tile("CITY_LYON")
+	_own(e, lisbon, 1, GameEnums.Level.CASTLE)
+	_own(e, paris, 0, GameEnums.Level.SHACK)
+	_own(e, lyon, 0)
+	var rent: int = Economy.rent(e.state, e.config, lisbon)
+	var value: int = Economy.sale_value(e.state, e.config, paris)
+	e.state.players[0].money = rent - 30_000
+
+	_land(e, 0, lisbon)
+	_eq(e.state.phase, GameEnums.Phase.SELL, "waits for the payer to sell")
+	_eq(e.state.actor, 0, "the payer acts")
+	_eq(e.state.pending.due, rent, "the payment waits")
+	_eq(e.state.players[1].money, e.config.starting_money, "nothing paid yet")
+	_ok(not e.submit_intent(0, Intent.sell(lisbon)), "cannot sell what is not theirs")
+
+	_ok(e.submit_intent(0, Intent.sell(paris)), "sells a property")
+	_eq(e.state.tiles[paris].owner, -1, "sold property is free")
+	_eq(e.state.tiles[paris].level, 0, "its buildings are gone")
+	_eq(e.state.players[0].money, rent - 30_000 + value, "sale value received")
+	_ok(not e.submit_intent(0, Intent.sell(lyon)), "no more sales once the payment is covered")
+
+	_ok(e.submit_intent(0, Intent.make(Intent.SETTLE)), "pays")
+	_eq(e.state.players[0].debt, 0, "no loan needed")
+	_eq(e.state.players[0].money, value - 30_000, "rent paid from the sale")
+	_eq(e.state.players[1].money, e.config.starting_money + rent, "owner paid in full")
+	_eq(e.state.tiles[lyon].owner, 0, "the other property is kept")
+	e.free()
+
+func test_selling_saves_a_player_in_debt() -> void:
+	var e := _engine(3)
+	var lisbon: int = _tile("CITY_LISBON")
+	var paris: int = _tile("CITY_PARIS")
+	_own(e, lisbon, 1)
+	_own(e, paris, 0, GameEnums.Level.CASTLE)
+	var rent: int = Economy.rent(e.state, e.config, lisbon)
+	var value: int = Economy.sale_value(e.state, e.config, paris)
+	e.state.players[0].money = 0
+	e.state.players[0].debt = 10_000
+
+	_land(e, 0, lisbon)
+	_ok(e.submit_intent(0, Intent.sell(paris)), "sells the castle")
+	_eq(e.state.players[0].debt, 0, "the sale pays the debt first")
+	_eq(e.state.players[0].money, value - 10_000, "the rest is kept")
+	_ok(e.submit_intent(0, Intent.make(Intent.SETTLE)), "pays")
+	_ok(not e.state.players[0].bankrupt, "still in the match")
+	_eq(e.state.players[0].money, value - 10_000 - rent, "rent paid")
+	e.free()
+
+func test_gift_waits_for_a_giver_who_is_short() -> void:
+	var e := _engine(3)
+	var paris: int = _tile("CITY_PARIS")
+	var gift: int = e.config.lucifer_gift_amount
+	_own(e, paris, 1)
+	e.state.players[1].money = 0
+
+	_draw(e, 0, GameEnums.Card.LUCIFER_GIFT)
+	_eq(e.state.phase, GameEnums.Phase.SELL, "the giver may sell")
+	_eq(e.state.actor, 1, "the giver acts, not the player of the turn")
+	_ok(e.submit_intent(1, Intent.make(Intent.SETTLE)), "borrows instead")
+	_eq(e.state.players[1].debt, gift, "loan for the gift")
+	_eq(e.state.players[0].money, e.config.starting_money + 2 * gift, "both gifts received")
+	_eq(e.state.players[2].money, e.config.starting_money - gift, "the next giver paid too")
+	_eq(e.state.turn, 1, "the turn went on")
+	e.free()
+
+func test_bot_sells_when_lucifer_does_not_lend() -> void:
+	var e := _engine(2)
+	var lisbon: int = _tile("CITY_LISBON")
+	var paris: int = _tile("CITY_PARIS")
+	_own(e, lisbon, 1)
+	_own(e, paris, 0, GameEnums.Level.CASTLE)
+	e.state.players[0].money = 0
+	e.state.players[0].debt = 10_000
+
+	_land(e, 0, lisbon)
+	_eq(SimpleBot.decide(e.state, e.config), Intent.sell(paris), "sells when it cannot borrow")
+	e.state.players[0].debt = 0
+	_eq(SimpleBot.decide(e.state, e.config), Intent.make(Intent.SETTLE), "borrows when it can")
+	e.free()
+
+func test_missing_money_is_reported() -> void:
+	var e := _engine(2)
+	var lisbon: int = _tile("CITY_LISBON")
+	e.state.players[0].money = 10
+	_land(e, 0, lisbon)
+	_eq(e.state.phase, GameEnums.Phase.ROLL, "nothing affordable: the turn ends")
+	_eq(e.state.turn, 1, "next player")
 	e.free()
 
 func test_bankrupt_money_goes_to_nobody() -> void:
@@ -565,7 +689,79 @@ func test_state_survives_json() -> void:
 	_eq(typeof(restored.players[0].money), TYPE_INT, "numbers come back as ints")
 	e.free()
 
+# ====== Room (host side, with a fake network) ======
+
+func test_leaving_the_lobby_frees_the_seat() -> void:
+	var net := _host_room()
+	_hello("peer-a", "Ana", "device-a")
+	_eq(_lobby_names(), ["Host", "Ana"], "the client is in the lobby")
+
+	Session._on_message("peer-a", {"t": "bye"})
+	_eq(_lobby_names(), ["Host"], "saying goodbye removes the player at once")
+
+	_hello("peer-a2", "Ana", "device-a")
+	_eq(_lobby_names(), ["Host", "Ana"], "back with the same name, not a numbered one")
+	_ok(net.types_for("peer-a2").has("welcome"), "welcomed")
+	Session.leave()
+
+func test_same_device_keeps_its_seat() -> void:
+	var net := _host_room()
+	_hello("peer-a", "Ana", "device-a")
+	Session._on_message("peer-a", {"t": "ready", "v": true})
+
+	_hello("peer-b", "Ana", "device-a")
+	_eq(_lobby_names(), ["Host", "Ana"], "another tab of the same device is the same player")
+	_eq(net.types_for("peer-a").back(), "reject", "the old tab is sent away")
+	_ok(not Session.lobby[1].ready, "has to say it is ready again")
+
+	# The old tab going away later must not take the seat with it.
+	Session._on_peer_disconnected("peer-a")
+	_eq(_lobby_names(), ["Host", "Ana"], "the seat stays with the new tab")
+
+	_hello("peer-c", "Ana", "device-c")
+	_eq(_lobby_names(), ["Host", "Ana", "Ana 2"], "someone else with the same name is another player")
+	Session.leave()
+
+func test_player_returns_to_a_running_match() -> void:
+	var net := _host_room()
+	_hello("peer-a", "Ana", "device-a")
+	Session._on_message("peer-a", {"t": "ready", "v": true})
+	Session.set_ready(true)
+	Session.start_match()
+	_ok(Session.in_match, "match started")
+
+	Session._on_message("peer-a", {"t": "bye"})
+	_ok(Session._engine.state.players[1].bot, "a bot plays for whoever left")
+
+	_hello("peer-a2", "Someone else", "device-a")
+	_ok(not Session._engine.state.players[1].bot, "the device gets its player back, whatever the name")
+	_eq(net.types_for("peer-a2").slice(0, 2), ["start", "state"], "and the current state")
+
+	_hello("peer-x", "Stranger", "device-x")
+	_eq(net.types_for("peer-x"), ["reject"], "nobody new joins a running match")
+	Session.leave()
+
+func test_host_leaving_tells_everyone() -> void:
+	var net := _host_room()
+	_hello("peer-a", "Ana", "device-a")
+	Session.leave()
+	_eq(net.sent.back().m.t, "bye", "the last thing the host says")
+	_eq(net.sent.back().to, "*", "to every client")
+
 # ====== Helpers ======
+
+## Opens a room as the host, on a network that only records what is sent.
+func _host_room() -> FakeTransport:
+	Session.create_room("Host", 0)
+	var net := FakeTransport.new()
+	Session._transport = net
+	return net
+
+func _hello(peer_id: String, player_name: String, device: String) -> void:
+	Session._on_message(peer_id, {"t": "hello", "name": player_name, "color": 1, "dev": device})
+
+func _lobby_names() -> Array:
+	return Session.lobby.map(func(entry: Dictionary) -> String: return entry.name)
 
 func _engine(player_count: int) -> MatchEngine:
 	var engine: MatchEngine = ENGINE_SCENE.instantiate()

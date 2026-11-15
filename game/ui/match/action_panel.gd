@@ -25,6 +25,10 @@ const OFFER_STEP := 1000
 @export var accept_button: Button = null
 @export var refuse_button: Button = null
 @export var skip_button: Button = null
+
+## Pays what is due once the player has finished selling, or gives up (loan or bankruptcy).
+## Its text is set here, already translated.
+@export var settle_button: Button = null
 @export var timer_label: Label = null
 
 var _time_left: float = 0.0
@@ -46,12 +50,14 @@ func _ready() -> void:
 	Require.not_null(accept_button, "ActionPanel.accept_button must be assigned in the editor.")
 	Require.not_null(refuse_button, "ActionPanel.refuse_button must be assigned in the editor.")
 	Require.not_null(skip_button, "ActionPanel.skip_button must be assigned in the editor.")
+	Require.not_null(settle_button, "ActionPanel.settle_button must be assigned in the editor.")
 	Require.not_null(timer_label, "ActionPanel.timer_label must be assigned in the editor.")
 
 	roll_button.pressed.connect(_send.bind(Intent.ROLL))
 	accept_button.pressed.connect(_send.bind(Intent.ACCEPT))
 	refuse_button.pressed.connect(_send.bind(Intent.REFUSE))
 	skip_button.pressed.connect(_send.bind(Intent.SKIP))
+	settle_button.pressed.connect(_send.bind(Intent.SETTLE))
 	offer_button.pressed.connect(_on_offer_pressed)
 	offer_slider.value_changed.connect(_on_offer_changed)
 	dice_view.settled.connect(_on_dice_settled)
@@ -67,7 +73,7 @@ func refresh(state: GameState, rolled: bool) -> void:
 	var mine: bool = state.actor >= 0 and Session.controls(state.actor)
 	var phase: int = state.phase
 	var pending: Dictionary = state.pending
-	var decision: String = "%d/%d/%s" % [phase, state.turn, pending.get("tile", -1)]
+	var decision: String = "%d/%d/%d/%s" % [phase, state.turn, state.actor, pending.get("tile", -1)]
 	var is_new: bool = decision != _decision
 	_decision = decision
 
@@ -75,6 +81,7 @@ func refresh(state: GameState, rolled: bool) -> void:
 	offer_box.visible = mine and phase == GameEnums.Phase.OFFER
 	response_box.visible = mine and phase == GameEnums.Phase.OFFER_RESPONSE
 	skip_button.visible = mine and phase in [GameEnums.Phase.OFFER, GameEnums.Phase.TARGET]
+	settle_button.visible = mine and phase == GameEnums.Phase.SELL
 	timer_label.visible = phase == GameEnums.Phase.OFFER_RESPONSE
 
 	# The offer controls need the room the dice take.
@@ -101,6 +108,8 @@ func refresh(state: GameState, rolled: bool) -> void:
 		GameEnums.Phase.OFFER_RESPONSE:
 			if is_new:
 				_time_left = pending.get("timeout", 0)
+		GameEnums.Phase.SELL:
+			settle_button.text = _settle_text(state)
 
 func _show_dice(dice: Array, rolled: bool) -> void:
 	if rolled:
@@ -132,7 +141,25 @@ func _prompt(state: GameState, mine: bool) -> String:
 			return tr("PROMPT_OFFER").format(args)
 		GameEnums.Phase.TARGET:
 			return tr(GameEnums.target_prompt_key(pending.kind))
+		GameEnums.Phase.SELL:
+			var missing: int = _missing(state)
+			args["total"] = MoneyFormat.full(pending.due)
+			args["amount"] = MoneyFormat.full(missing)
+			return tr("PROMPT_SELL" if missing > 0 else "PROMPT_SELL_READY").format(args)
 	return ""
+
+# What the payer still lacks to cover the payment that is waiting.
+func _missing(state: GameState) -> int:
+	return maxi(int(state.pending.due) - int(state.players[state.actor].money), 0)
+
+# What settling does right now: pay, borrow what is missing from Lucifer, or go bankrupt.
+func _settle_text(state: GameState) -> String:
+	var missing: int = _missing(state)
+	if missing == 0:
+		return tr("UI_SETTLE_PAY").format({"amount": MoneyFormat.full(state.pending.due)})
+	if Bank.can_borrow(state, Session.CONFIG, state.actor, missing):
+		return tr("UI_SETTLE_LOAN").format({"amount": MoneyFormat.full(missing)})
+	return tr("UI_SETTLE_BANKRUPT")
 
 func _name(state: GameState, pid: int) -> String:
 	return state.players[pid].name if pid >= 0 else ""

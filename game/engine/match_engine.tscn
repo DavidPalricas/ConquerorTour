@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://engine/match_engine.gd" id="1"]
 [ext_resource type="Resource" path="res://config/game_config.tres" id="2"]
@@ -10,12 +10,13 @@
 [ext_resource type="Script" path="res://engine/states/target_state.gd" id="8"]
 [ext_resource type="Script" path="res://engine/states/game_over_state.gd" id="9"]
 [ext_resource type="Script" path="res://patterns/fsm/transition.gd" id="10"]
+[ext_resource type="Script" path="res://engine/states/sell_state.gd" id="11"]
 
 [node name="MatchEngine" type="Node" node_paths=PackedStringArray("_states", "_transitions")]
 script = ExtResource("1")
 config = ExtResource("2")
-_states = [NodePath("States/Idle"), NodePath("States/Roll"), NodePath("States/Buy"), NodePath("States/Offer"), NodePath("States/OfferResponse"), NodePath("States/Target"), NodePath("States/GameOver")]
-_transitions = [NodePath("Transitions/ToRoll"), NodePath("Transitions/ToBuy"), NodePath("Transitions/ToOffer"), NodePath("Transitions/ToOfferResponse"), NodePath("Transitions/ToTarget"), NodePath("Transitions/ToGameOver")]
+_states = [NodePath("States/Idle"), NodePath("States/Roll"), NodePath("States/Buy"), NodePath("States/Offer"), NodePath("States/OfferResponse"), NodePath("States/Target"), NodePath("States/GameOver"), NodePath("States/Sell")]
+_transitions = [NodePath("Transitions/ToRoll"), NodePath("Transitions/ToBuy"), NodePath("Transitions/ToOffer"), NodePath("Transitions/ToOfferResponse"), NodePath("Transitions/ToTarget"), NodePath("Transitions/ToGameOver"), NodePath("Transitions/ToSell")]
 
 [node name="States" type="Node" parent="."]
 
@@ -45,6 +46,10 @@ phase = 5
 [node name="GameOver" type="Node" parent="States"]
 script = ExtResource("9")
 phase = 6
+
+[node name="Sell" type="Node" parent="States"]
+script = ExtResource("11")
+phase = 7
 
 [node name="Transitions" type="Node" parent="."]
 
@@ -78,3 +83,8 @@ to = NodePath("../../States/Target")
 script = ExtResource("10")
 transition_name = &"game_over"
 to = NodePath("../../States/GameOver")
+
+[node name="ToSell" type="Node" parent="Transitions" node_paths=PackedStringArray("to")]
+script = ExtResource("10")
+transition_name = &"sell"
+to = NodePath("../../States/Sell")

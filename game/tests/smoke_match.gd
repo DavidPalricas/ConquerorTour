@@ -15,7 +15,10 @@ const MATCH_SCENE := "res://ui/match/match.tscn"
 const PLAYERS := 4
 const MAX_STEPS := 20000
 const SHOT_AT_STEP := 40
-const SETTLE_SECONDS := 3.0
+const SETTLE_SECONDS := 7.0
+
+## Where the owner strip of a tile is checked, along the tile, in flat board pixels.
+const STRIP_SAMPLES: Array[int] = [-40, -22, 0, 22, 42]
 
 var _view: MatchView = null
 
@@ -41,7 +44,9 @@ func _ready() -> void:
 		return
 	Session.start_match()
 	_view = load(MATCH_SCENE).instantiate()
-	add_child(_view)
+	# As the current scene, so the screen is fitted for the match (see ScreenFit).
+	get_tree().root.add_child(_view)
+	get_tree().current_scene = _view
 
 	var steps := 0
 	var shot_taken := false
@@ -92,17 +97,22 @@ func _board_matches(state: GameState) -> bool:
 		if state.tiles[i].owner >= 0:
 			expected = KingPalette.color_of(state.players[state.tiles[i].owner].color)
 
-		# A point of the strip that no king or building stands in front of.
-		var point: Vector2 = _view.board.transform * (tiles[i].position + Vector2(20, 43))
-		var pixel: Color = image.get_pixelv(Vector2i(point))
-		if absf(pixel.r - expected.r) + absf(pixel.g - expected.g) + absf(pixel.b - expected.b) > 0.05:
+		# The strip runs along one edge of the tile. Kings and buildings, also the ones of the
+		# tiles in front, may stand over part of it: one clear point is enough.
+		var found := false
+		for x: int in STRIP_SAMPLES:
+			var point: Vector2 = _view.board.transform * (tiles[i].position + Vector2(x, 43))
+			var pixel: Color = image.get_pixelv(Vector2i(point))
+			if absf(pixel.r - expected.r) + absf(pixel.g - expected.g) + absf(pixel.b - expected.b) <= 0.05:
+				found = true
+		if not found:
 			printerr("Tile %s is drawn with the wrong owner." % state.board[i].key)
 			matches = false
 
 	return matches
 
 func _shot(shot_name: String) -> void:
-	# Lets the dice stop, the kings arrive and the pop-up open.
+	# Lets the dice stop, the kings arrive, the pop-up open and the messages fade away.
 	if DisplayServer.get_name() != "headless":
 		await get_tree().create_timer(SETTLE_SECONDS).timeout
 	await get_tree().process_frame
